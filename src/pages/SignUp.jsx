@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import axios from "axios"
+import axios from "axios";
 import { SERVER_URL } from "../../Contant.js";
 import { useNavigate } from "react-router-dom";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../utils/firebase.js";
+import { Button } from "../ui/Button.jsx";
+import { Input } from "../ui/Input.jsx";
+import { toast } from "react-toastify";
+import { handleApiError } from "../utils/handleApiError.js";
 
 function SignUp() {
   const [selectedRole, setSelectedRole] = useState("user");
@@ -10,7 +16,8 @@ function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mobile, setMobile] = useState("");
-  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const roles = [
     { key: "user", label: "user" },
     { key: "owner", label: "owner" },
@@ -19,21 +26,53 @@ function SignUp() {
 
   const handleSignup = async () => {
     try {
-      console.log(`${SERVER_URL}/api/auth/signup`);
+      setLoading(true);
+
       const result = await axios.post(
         `${SERVER_URL}/api/auth/signup`,
+        { fullName, email, mobile, password, role: selectedRole },
+        { withCredentials: true }
+      );
+
+      toast.success(result.data.message || "Signup successful!");
+    } catch (error) {
+      handleApiError(error, "Signup failed. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleAuth = async () => {
+    if (!mobile || !selectedRole) {
+      return toast.error("Please enter mobile number and select role");
+    }
+
+    try {
+      setLoading(true);
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+
+      const response = await axios.post(
+        `${SERVER_URL}/api/auth/google-auth`,
         {
-          fullName,
-          email,
+          fullName: result.user.displayName,
+          email: result.user.email,
           mobile,
-          password,
           role: selectedRole,
         },
         { withCredentials: true }
       );
-      console.log(result);
+
+      if (response.data?.success) {
+        toast.success(response.data.message || "Google signup successful!");
+        navigate("/dashboard");
+      } else {
+        toast.error(response.data?.message || "Google signup failed");
+      }
     } catch (error) {
-      console.log(error);
+      handleApiError(error, "Google signup failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,90 +88,75 @@ function SignUp() {
         </p>
 
         {/* Full Name */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Full Name
-          </label>
-          <input
-            type="text"
-            placeholder="Enter your Full Name"
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#ff4d30]"
-            onChange={(e) => setFullName(e.target.value)}
-            value={fullName}
-          />
-        </div>
+        <Input
+          label="Full Name"
+          placeholder="Enter your Full Name"
+          type="text"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+        />
 
         {/* Email */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Email
-          </label>
-          <input
-            type="email"
-            placeholder="Enter your Email"
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#ff4d30]"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-          />
-        </div>
+        <Input
+          label="Email"
+          placeholder="Enter your Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
         {/* Mobile */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Mobile
-          </label>
-          <input
-            type="text"
-            placeholder="Enter your Mobile Number"
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#ff4d30]"
-            onChange={(e) => setMobile(e.target.value)}
-            value={mobile}
-          />
-        </div>
+        <Input
+          label="Mobile"
+          placeholder="Enter your Mobile Number"
+          type="text"
+          value={mobile}
+          onChange={(e) => setMobile(e.target.value)}
+        />
 
         {/* Password */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <input
-            type="password"
-            placeholder="Enter your password"
-            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#ff4d30]"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-          />
-        </div>
-
+        <Input
+          label="Password"
+          placeholder="Enter your Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
         {/* Role */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Role
           </label>
+
           <div className="grid grid-cols-3 gap-2">
             {roles.map((role) => (
-              <button
+              <Button
                 key={role.key}
+                text={role.label}
+                variant={selectedRole === role.key ? "primary" : "secondary"}
+                fullWidth
+                size="md"
                 onClick={() => setSelectedRole(role.key)}
-                className={`w-full py-2 rounded-md text-sm font-medium border transition-all duration-200 cursor-pointer ${
-                  selectedRole === role.key
-                    ? "bg-[#ff4d30] text-white border-[#ff4d30] hover:bg-[#e04329]"
-                    : "border-gray-300 text-gray-600 hover:bg-[#ffe3dc]"
-                }`}
-              >
-                {role.label}
-              </button>
+              />
             ))}
           </div>
         </div>
 
         {/* Sign Up Button */}
-        <button className="w-full bg-[#ff4d30] text-white font-semibold rounded-md py-2 hover:bg-[#e04329] transition mb-3 cursor-pointer" onClick={handleSignup}>
-          Sign Up
-        </button>
+        <Button
+          variant={"primary"}
+          size={"md"}
+          text={"Sign up"}
+          onClick={handleSignup}
+          extraStyle={"justify-center w-full"}
+          loading={loading}
+        />
 
         {/* Google Sign Up */}
-        <button className="w-full flex justify-center items-center gap-2 border border-gray-300 rounded-md py-2 font-medium hover:bg-gray-50 transition cursor-pointer">
+        <button
+          className="w-full flex justify-center items-center gap-2 border border-gray-300 rounded-md py-2 font-medium hover:bg-gray-50 transition cursor-pointer"
+          onClick={handleGoogleAuth}
+        >
           <FcGoogle />
           Sign up with Google
         </button>
@@ -140,7 +164,10 @@ function SignUp() {
         {/* Sign In */}
         <div className="text-center text-sm mt-4 text-gray-600">
           Already have an account?{" "}
-          <span className="text-[#ff4d30] font-medium cursor-pointer hover:underline" onClick={() => navigate("/signin")}>
+          <span
+            className="text-[#ff4d30] font-medium cursor-pointer hover:underline"
+            onClick={() => navigate("/signin")}
+          >
             Sign In
           </span>
         </div>

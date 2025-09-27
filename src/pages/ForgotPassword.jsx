@@ -1,9 +1,12 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "../../Contant";
+import { Input } from "../ui/Input";
+import { Button } from "../ui/Button";
+import { toast } from "react-toastify";
+import { handleApiError } from "../utils/handleApiError";
 
 export default function ForgotPassword() {
   const [step, setStep] = useState(1);
@@ -11,59 +14,81 @@ export default function ForgotPassword() {
   const [otp, setOtp] = useState("");
   const [newpassword, setNewpassword] = useState("");
   const [confirmpassword, setConfirmpassword] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSendOtp = async () => {
+    if (!email) return toast.error("Please enter your email");
+
     try {
+      setLoading(true);
       const result = await axios.post(
         `${SERVER_URL}/api/auth/send-otp`,
-        {
-          email,
-        },
+        { email },
         { withCredentials: true }
       );
-      console.log(result);
-      setStep(2);
+
+      if (result.data?.success) {
+        toast.success(result.data.message || "OTP sent successfully");
+        setStep(2);
+      } else {
+        toast.error(result.data?.message || "Failed to send OTP");
+      }
     } catch (error) {
-      console.log(error);
+      handleApiError(error, "Failed to send OTP");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleVerifyOtp = async () => {
+    if (!otp) return toast.error("Please enter the OTP");
+
     try {
+      setLoading(true);
       const result = await axios.post(
         `${SERVER_URL}/api/auth/verify-otp`,
-        {
-          email,
-          otp,
-        },
+        { email, otp },
         { withCredentials: true }
       );
-      console.log(result);
-      setStep(3);
+
+      if (result.data?.success) {
+        toast.success(result.data.message || "OTP verified successfully");
+        setStep(3);
+      } else {
+        toast.error(result.data?.message || "OTP verification failed");
+      }
     } catch (error) {
-      console.log(error);
+      handleApiError(error, "OTP verification failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleResetPassword = async () => {
+    if (!newpassword || !confirmpassword)
+      return toast.error("Please fill in all password fields");
+    if (newpassword !== confirmpassword)
+      return toast.error("Passwords do not match");
+
     try {
-      if (newpassword !== confirmpassword) {
-        alert("both password is not same");
-        return null;
-      }
+      setLoading(true);
       const result = await axios.post(
         `${SERVER_URL}/api/auth/reset-password`,
-        {
-          newpassword, email
-        },
+        { newPassword: newpassword, email },
         { withCredentials: true }
       );
-      console.log(result);
-      navigate("/signin");
+
+      if (result.data?.success) {
+        toast.success(result.data.message || "Password reset successfully");
+        navigate("/signin");
+      } else {
+        toast.error(result.data?.message || "Password reset failed");
+      }
     } catch (error) {
-      console.log(error);
+      handleApiError(error, "Password reset failed");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,91 +103,74 @@ export default function ForgotPassword() {
           Forgot Password
         </div>
 
-        {/* step 1 */}
-        {step == 1 && (
+        {step === 1 && (
           <>
-            <div className="my-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
+            <div className="mt-4">
+              <Input
+                label="Email"
                 placeholder="Enter your Email"
-                className="w-full border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-1 focus:ring-[#ff4d30]"
-                onChange={(e) => setEmail(e.target.value)}
+                type="email"
                 value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                extraStyle="mt-20"
               />
             </div>
 
-            <button
-              className="w-full bg-[#ff4d30] text-white font-semibold rounded-md py-1 hover:bg-[#e04329] transition mb-3 cursor-pointer"
+            <Button
+              text="Send OTP"
               onClick={handleSendOtp}
-            >
-              Send OTP
-            </button>
+              fullWidth
+              loading={loading}
+            />
           </>
         )}
 
-        {/* step 2 */}
-        {step == 2 && (
+        {step === 2 && (
           <>
-            <div className="my-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Enter OTP
-              </label>
-              <input
-                type="text"
+            <div className="mt-4">
+              <Input
+                label="Enter OTP"
                 placeholder="Enter your OTP"
-                className="w-full border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-1 focus:ring-[#ff4d30]"
-                onChange={(e) => setOtp(e.target.value)}
+                type="text"
                 value={otp}
+                onChange={(e) => setOtp(e.target.value)}
               />
             </div>
 
-            <button
-              className="w-full bg-[#ff4d30] text-white font-semibold rounded-md py-1 hover:bg-[#e04329] transition mb-3 cursor-pointer"
+            <Button
+              text="Verify"
               onClick={handleVerifyOtp}
-            >
-              Verify
-            </button>
+              fullWidth
+              loading={loading}
+            />
           </>
         )}
 
-        {/* step 3 */}
-        {step == 3 && (
+        {step === 3 && (
           <>
-            <div className="my-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                New Password
-              </label>
-              <input
-                type="password"
+            <div className="mt-4">
+              <Input
+                label="New Password"
                 placeholder="Enter your New Password"
-                className="w-full border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-1 focus:ring-[#ff4d30]"
-                onChange={(e) => setNewpassword(e.target.value)}
-                value={newpassword}
-              />
-            </div>
-
-            <div className="my-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password
-              </label>
-              <input
                 type="password"
-                placeholder="Re-Enter your New Password"
-                className="w-full border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-1 focus:ring-[#ff4d30]"
-                onChange={(e) => setConfirmpassword(e.target.value)}
+                value={newpassword}
+                onChange={(e) => setNewpassword(e.target.value)}
+              />
+              <Input
+                label="Confirm Password"
+                placeholder="Re-enter your New Password"
+                type="password"
                 value={confirmpassword}
+                onChange={(e) => setConfirmpassword(e.target.value)}
               />
             </div>
 
-            <button
-              className="w-full bg-[#ff4d30] text-white font-semibold rounded-md py-1 hover:bg-[#e04329] transition mb-3 cursor-pointer"
+            <Button
+              text="Reset Password"
               onClick={handleResetPassword}
-            >
-              Reset Password
-            </button>
+              fullWidth
+              loading={loading}
+            />
           </>
         )}
       </div>
