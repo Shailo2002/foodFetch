@@ -30,7 +30,7 @@ function SignIn() {
     <div className="flex justify-center items-center min-h-screen bg-[#fff7f4]">
       <div className="bg-white shadow-md rounded-xl px-8 py-10 w-[380px]">
         {/* Header */}
-        <h1 className="text-2xl font-extrabold text-[#ff4d30] mb-1">Vingo</h1>
+        <h1 className="text-2xl font-extrabold text-[#ff4d30] mb-1">FoodFetch</h1>
         <p className="text-gray-600 text-sm mb-6">
           Sign In to your account to get started with delicious food deliveries
         </p>
@@ -65,7 +65,7 @@ function SignIn() {
 
         {/* Forgot Password */}
         <div className="flex justify-end mb-4">
-          <span className="text-sm text-[#ff4d30] font-medium cursor-pointer hover:underline">
+          <span className="text-sm text-[#ff4d30] font-medium cursor-pointer hover:underline" onClick={() => navigate("/forgot-password")}>
             Forgot Password
           </span>
         </div>
