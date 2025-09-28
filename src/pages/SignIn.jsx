@@ -9,13 +9,15 @@ import { Button } from "../ui/Button.jsx";
 import { Input } from "../ui/Input.jsx";
 import { toast } from "react-toastify";
 import { handleApiError } from "../utils/handleApiError.js";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice.js";
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const handleSignIn = async () => {
     if (!email || !password) {
       return toast.error("Email and password are required");
@@ -28,6 +30,7 @@ function SignIn() {
         { email, password },
         { withCredentials: true }
       );
+      dispatch(setUserData(result.data));
 
       if (result.data?.success) {
         toast.success(result.data.message || "Login successful!");
@@ -53,6 +56,7 @@ function SignIn() {
         { fullName: result.user.displayName, email: result.user.email },
         { withCredentials: true }
       );
+      dispatch(setUserData(response.data));
 
       if (response.data?.success) {
         toast.success(response.data.message || "Google login successful!");

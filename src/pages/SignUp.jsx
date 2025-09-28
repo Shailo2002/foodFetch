@@ -9,6 +9,8 @@ import { Button } from "../ui/Button.jsx";
 import { Input } from "../ui/Input.jsx";
 import { toast } from "react-toastify";
 import { handleApiError } from "../utils/handleApiError.js";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice.js";
 
 function SignUp() {
   const [selectedRole, setSelectedRole] = useState("user");
@@ -18,6 +20,8 @@ function SignUp() {
   const [mobile, setMobile] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const roles = [
     { key: "user", label: "user" },
     { key: "owner", label: "owner" },
@@ -33,7 +37,7 @@ function SignUp() {
         { fullName, email, mobile, password, role: selectedRole },
         { withCredentials: true }
       );
-
+      dispatch(setUserData(result.data));
       toast.success(result.data.message || "Signup successful!");
     } catch (error) {
       handleApiError(error, "Signup failed. Try again.");
@@ -62,6 +66,8 @@ function SignUp() {
         },
         { withCredentials: true }
       );
+
+      dispatch(setUserData(response.data));
 
       if (response.data?.success) {
         toast.success(response.data.message || "Google signup successful!");
