@@ -31,7 +31,7 @@ function SignIn() {
 
       if (result.data?.success) {
         toast.success(result.data.message || "Login successful!");
-        navigate("/");
+        navigate("/dashboard");
       } else {
         toast.error(result.data?.message || "Login failed");
       }
