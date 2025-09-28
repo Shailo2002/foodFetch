@@ -6,10 +6,12 @@ import { ToastContainer } from "react-toastify";
 import useGetCurrentUser from "./hooks/useGetCurrentUser";
 import { useSelector } from "react-redux";
 import Home from "./pages/Home";
+import useGetCity from "./hooks/useGetCity";
 
 function App() {
   useGetCurrentUser();
-  const userData = useSelector((state) => state.user);
+  useGetCity();
+  const {userData} = useSelector((state) => state.user);
   return (
     <BrowserRouter>
       <ToastContainer

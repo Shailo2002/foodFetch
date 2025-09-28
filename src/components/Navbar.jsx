@@ -1,0 +1,143 @@
+import React, { useState } from "react";
+import { MdOutlineLocationOn } from "react-icons/md";
+import { IoIosSearch } from "react-icons/io";
+import { LuShoppingCart } from "react-icons/lu";
+import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { handleApiError } from "../utils/handleApiError";
+import { SERVER_URL } from "../../Contant";
+import { setUserData } from "../redux/userSlice";
+
+export default function Navbar() {
+  const { userData } = useSelector((state) => state.user);
+  const { city } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleLogOut = async () => {
+    try {
+      console.log("logout button");
+
+      const response = await axios.get(`${SERVER_URL}/api/auth/signout`, {
+        withCredentials: true,
+      });
+      dispatch(setUserData(null));
+
+      toast.success("logout successfully");
+    } catch (error) {
+      handleApiError(error, "Logout failed. Try again.");
+    }
+  };
+
+  const userInitial = userData?.data?.fullName?.charAt(0)?.toUpperCase();
+
+  // Reusable search bar
+  const SearchBar = ({ fullWidth }) => (
+    <div
+      className={`flex items-center bg-white border border-gray-200 rounded-full px-3 py-2 shadow-sm hover:shadow-md transition-all ${
+        fullWidth ? "w-full" : "max-w-xs"
+      }`}
+    >
+      <IoIosSearch size={22} className="text-gray-500" />
+      <input
+        type="text"
+        placeholder="Search food..."
+        className="ml-2 bg-transparent outline-none text-sm w-full"
+      />
+    </div>
+  );
+
+  // Reusable logout menu
+  const LogoutMenu = () => (
+    <div className="absolute right-0 mt-2 bg-white shadow-lg rounded-lg border border-gray-200 py-2 w-40 opacity-0 group-hover:opacity-100 group-hover:translate-y-1 transform transition-all duration-200 z-50 pointer-events-auto group-hover:pointer-events-auto hover:opacity-100 hover:pointer-events-auto">
+      <div className="w-full text-left px-4 py-2 font-medium hover:bg-gray-50">
+        {userData?.data.fullName}
+      </div>
+      <button
+        className="w-full text-left px-4 py-2 font-medium hover:bg-gray-50"
+        onClick={() => toast.dark("My Order")}
+      >
+        My Order
+      </button>
+      <button
+        onClick={handleLogOut}
+        className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 transition"
+      >
+        Logout
+      </button>
+    </div>
+  );
+
+  return (
+    <div>
+      <nav className="bg-[#fff9f6] shadow-[0_4px_12px_rgba(255,77,48,0.15)] border-b border-[#ffe3db] px-4 sm:px-6 py-3 flex justify-between items-center relative">
+        <div className="hidden md:block text-2xl font-extrabold text-[#ff4d30] tracking-wide">
+          FoodFetch
+        </div>
+
+        <div className=" md:hidden flex items-center gap-1">
+          <MdOutlineLocationOn size={20} className="text-[#ff4d30]" />
+          <span>{city}</span>
+        </div>
+
+        <div className="hidden md:flex items-center gap-5">
+          {/* Location */}
+          <div className="flex items-center gap-1 text-gray-700">
+            <MdOutlineLocationOn size={24} className="text-[#ff4d30]" />
+            <span className="font-medium">{city}</span>
+          </div>
+
+          {/* Search */}
+          <SearchBar />
+
+          {/* Cart & Profile */}
+          <div className="flex items-center gap-4">
+            <button className="text-gray-700 hover:text-[#ff4d30] transition">
+              <LuShoppingCart size={22} />
+            </button>
+
+            {/* Profile + Hover Popup */}
+            <div className="relative group">
+              <div className="bg-[#ff4d30] w-9 h-9 flex items-center justify-center rounded-full text-white font-semibold text-lg cursor-pointer hover:bg-[#ff674d] transition">
+                {userInitial}
+              </div>
+              <LogoutMenu />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-4 md:hidden">
+          <button className="text-gray-700 hover:text-[#ff4d30] transition">
+            <LuShoppingCart size={22} />
+          </button>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="text-[#ff4d30] text-3xl focus:outline-none"
+          >
+            {menuOpen ? <HiOutlineX /> : <HiOutlineMenu />}
+          </button>
+        </div>
+
+        {menuOpen && (
+          <div className="absolute top-[64px] right-0 w-full bg-white border-t border-[#ffe3db] flex flex-col gap-4 p-4 shadow-md md:hidden z-50">
+            <button className="flex items-center gap-2 text-gray-700 hover:text-[#ff4d30] transition">
+              My Orders
+            </button>
+            <button
+              onClick={handleLogOut}
+              className="text-red-500 hover:text-red-600 text-left"
+            >
+              Sign Out
+            </button>
+          </div>
+        )}
+      </nav>
+
+      <div className="block md:hidden mx-6 my-6">
+        <SearchBar fullWidth />
+      </div>
+    </div>
+  );
+}
