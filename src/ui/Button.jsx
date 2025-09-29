@@ -2,7 +2,7 @@ import React from "react";
 
 const variantStyles = {
   primary:
-    "bg-[#ff4d30] text-white font-semibold rounded-md py-2 hover:bg-[#e04329] transition mb-3 cursor-pointer",
+    "bg-[#ff4d30] text-white font-semibold rounded-md py-2 hover:bg-[#ff5c3d] transition mb-3 cursor-pointer",
   secondary:
     "bg-gray-200 text-gray-800 font-semibold rounded-md py-2 hover:bg-gray-300 transition mb-3 cursor-pointer",
   outline:

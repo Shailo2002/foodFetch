@@ -145,7 +145,7 @@ export default function Navbar() {
             </button>
           )}
 
-          {userData.data.role == "owner" && (
+          {userData.data.role == "owner" && myShopData && (
             <div className="flex gap-2">
               {" "}
               <button
