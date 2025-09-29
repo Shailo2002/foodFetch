@@ -3,6 +3,7 @@ import { MdOutlineLocationOn } from "react-icons/md";
 import { IoIosSearch } from "react-icons/io";
 import { LuShoppingCart } from "react-icons/lu";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
+import { FaPlus } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -13,8 +14,11 @@ import { setUserData } from "../redux/userSlice";
 export default function Navbar() {
   const { userData } = useSelector((state) => state.user);
   const { city } = useSelector((state) => state.user);
+  const myShopData = useSelector((state) => state.owner.myShopData);
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  console.log("myshopData :", myShopData)
 
   const handleLogOut = async () => {
     try {
@@ -90,13 +94,39 @@ export default function Navbar() {
           </div>
 
           {/* Search */}
-          <SearchBar />
+          {userData.data.role == "user" && <SearchBar />}
 
           {/* Cart & Profile */}
           <div className="flex items-center gap-4">
-            <button className="text-gray-700 hover:text-[#ff4d30] transition">
-              <LuShoppingCart size={22} />
-            </button>
+            {userData.data.role == "owner" && myShopData && (
+              <div className="flex gap-2">
+                {" "}
+                <button
+                  onClick={() => {
+                    toast.dark("add item");
+                  }}
+                  className="min-w-24 text-left px-2 py-1 text-red-500 bg-red-100 hover:bg-red-200 transition flex justify-center cursor-pointer rounded-lg items-center gap-0.5"
+                >
+                  <FaPlus />
+                  Add Item
+                </button>
+                <button
+                  onClick={() => toast.dark("my order")}
+                  className="relative min-w-24 text-left px-3 py-2 text-red-500 bg-red-100 hover:bg-red-200 transition flex justify-center items-center cursor-pointer rounded-lg"
+                >
+                  Pending Order
+                  <span className="absolute -top-1 -right-1 bg-[#ff4d30] text-white text-xs font-semibold w-5 h-5 flex items-center justify-center rounded-full">
+                    0
+                  </span>
+                </button>
+              </div>
+            )}
+
+            {userData.data.role == "user" && (
+              <button className="text-gray-700 hover:text-[#ff4d30] transition">
+                <LuShoppingCart size={22} />
+              </button>
+            )}
 
             {/* Profile + Hover Popup */}
             <div className="relative group">
@@ -109,9 +139,27 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-4 md:hidden">
-          <button className="text-gray-700 hover:text-[#ff4d30] transition">
-            <LuShoppingCart size={22} />
-          </button>
+          {userData.data.role == "user" && (
+            <button className="text-gray-700 hover:text-[#ff4d30] transition">
+              <LuShoppingCart size={22} />
+            </button>
+          )}
+
+          {userData.data.role == "owner" && (
+            <div className="flex gap-2">
+              {" "}
+              <button
+                onClick={() => {
+                  toast.dark("add item");
+                }}
+                className="min-w-24 text-left px-2 py-2 text-red-500 bg-red-100 hover:bg-red-200 transition flex justify-center cursor-pointer rounded-lg items-center gap-0.5"
+              >
+                <FaPlus />
+                Add Item
+              </button>
+            </div>
+          )}
+
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="text-[#ff4d30] text-3xl focus:outline-none"
@@ -135,9 +183,11 @@ export default function Navbar() {
         )}
       </nav>
 
-      <div className="block md:hidden mx-6 my-6">
-        <SearchBar fullWidth />
-      </div>
+      {userData.data.role == "user" && (
+        <div className="block md:hidden mx-6 my-6">
+          <SearchBar fullWidth />
+        </div>
+      )}
     </div>
   );
 }

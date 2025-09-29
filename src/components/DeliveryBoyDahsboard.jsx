@@ -1,13 +1,9 @@
-import React, { Component } from 'react'
+import React from 'react'
 
-export class DeliveryBoyDahsboard extends Component {
-  render() {
-    return (
-      <div>
-        deliveryboy dashboard
-      </div>
-    )
-  }
+export default function DeliveryBoyDahsboard() {
+  return (
+    <div>
+      delivery  boy
+    </div>
+  )
 }
-
-export default DeliveryBoyDahsboard

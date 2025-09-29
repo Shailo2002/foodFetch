@@ -1,13 +1,11 @@
-import React, { Component } from 'react'
+import React from 'react'
+import Navbar from './Navbar'
 
-export class OwnerDashboard extends Component {
-  render() {
-    return (
-      <div>
-        owner Dashboard
-      </div>
-    )
-  }
+export default function OwnerDashboard() {
+  return (
+    <div>
+      <Navbar/>
+      owner
+    </div>
+  )
 }
-
-export default OwnerDashboard

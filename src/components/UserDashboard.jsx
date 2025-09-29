@@ -1,13 +1,12 @@
-import React, { Component } from 'react'
+import React from "react";
+import Navbar from "./Navbar";
 
-export class UserDashboard extends Component {
-  render() {
-    return (
-      <div>
-        userDashboard
-      </div>
-    )
-  }
+export default function UserDashboard() {
+  return (
+    <div >
+      {" "}
+      <Navbar />
+      <div>userDashboard</div>
+    </div>
+  );
 }
-
-export default UserDashboard
