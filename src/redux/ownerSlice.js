@@ -5,7 +5,7 @@ export const ownerSlice = createSlice({
   initialState: { myShopData: null },
   reducers: {
     setMyShopData: (state, action) => {
-      state.value = action.payload;
+      state.myShopData = action.payload; 
     },
   },
 });

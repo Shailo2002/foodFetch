@@ -25,6 +25,9 @@ export const userSlice = createSlice({
     },
     clearUserData: (state) => {
       state.userData = null;
+      state.currentCity=null;
+      state.currentAddress=null;
+      state.currentState=null;
       state.loading = false;
     },
   },

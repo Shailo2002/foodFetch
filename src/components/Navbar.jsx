@@ -9,16 +9,17 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { handleApiError } from "../utils/handleApiError";
 import { SERVER_URL } from "../../Contant";
-import { setUserData } from "../redux/userSlice";
+import { clearUserData, setUserData } from "../redux/userSlice";
+import { setMyShopData } from "../redux/ownerSlice";
 
 export default function Navbar() {
   const { userData } = useSelector((state) => state.user);
-  const { city } = useSelector((state) => state.user);
+  const { currentCity } = useSelector((state) => state.user);
   const myShopData = useSelector((state) => state.owner.myShopData);
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  console.log("myshopData :", myShopData)
+  console.log("myshopData navbar :", myShopData);
 
   const handleLogOut = async () => {
     try {
@@ -27,7 +28,8 @@ export default function Navbar() {
       const response = await axios.get(`${SERVER_URL}/api/auth/signout`, {
         withCredentials: true,
       });
-      dispatch(setUserData(null));
+      dispatch(clearUserData());
+      dispatch(setMyShopData(null));
 
       toast.success("logout successfully");
     } catch (error) {
@@ -83,14 +85,14 @@ export default function Navbar() {
 
         <div className=" md:hidden flex items-center gap-1">
           <MdOutlineLocationOn size={20} className="text-[#ff4d30]" />
-          <span>{city}</span>
+          <span>{currentCity}</span>
         </div>
 
         <div className="hidden md:flex items-center gap-5">
           {/* Location */}
           <div className="flex items-center gap-1 text-gray-700">
             <MdOutlineLocationOn size={24} className="text-[#ff4d30]" />
-            <span className="font-medium">{city}</span>
+            <span className="font-medium">{currentCity}</span>
           </div>
 
           {/* Search */}

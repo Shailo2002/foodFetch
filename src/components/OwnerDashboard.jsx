@@ -6,12 +6,12 @@ import { Button } from "../ui/Button.jsx";
 import { useNavigate } from "react-router-dom";
 
 export default function OwnerDashboard() {
-  const myShopData = useSelector((state) => state.owner.myShopData);
+  // const myShopData = useSelector((state) => state.owner.myShopData);
   const navigate = useNavigate()
   return (
     <div>
       <Navbar />
-      {!myShopData && (
+      {/* {!myShopData && ( */}
         <div className="flex justify-center items-center p-4 md:p-6">
           <div className="w-full max-w-md bg-white shadow-lg rounded-2xl border  border-gray-100 hover:shadow-xl transition-shadow duration-300">
             <div className="flex items-center justify-center flex-col p-4">
@@ -29,7 +29,7 @@ export default function OwnerDashboard() {
             </div>
           </div>
         </div>
-      )}
+      {/* )} */}
     </div>
   );
 }

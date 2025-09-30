@@ -1,24 +1,62 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { FaUtensils } from "react-icons/fa";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { setMyShopData } from "../redux/ownerSlice";
+import { toast } from "react-toastify";
+import { handleApiError } from "../utils/handleApiError";
+import { SERVER_URL } from "../../Contant";
 
 export default function CreateEditShop() {
   const navigate = useNavigate();
-  const { myshopData } = useSelector((state) => state.owner);
-  const { currentCity, currentState, currentAddress } = useSelector(
+  const { myShopData } = useSelector((state) => state.owner);
+  const { userData, currentCity, currentState, currentAddress } = useSelector(
     (state) => state.user
   );
-  console.log(currentCity, currentState, currentAddress);
 
-  const [name, setName] = useState(myshopData?.name || "");
+  const [name, setName] = useState(myShopData?.name || "");
   const [city, setCity] = useState(currentCity || "");
   const [state, setState] = useState(currentState || "");
   const [address, setAddress] = useState(currentAddress || "");
-  
+  const [frontendImage, setFrontendImage] = useState(myShopData?.image || null);
+  const [backendImage, setBackendImage] = useState(null);
+  const dispatch = useDispatch();
+
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    setBackendImage(file);
+    setFrontendImage(URL.createObjectURL(file));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("city", city);
+      formData.append("state", state);
+      formData.append("address", address);
+      if (backendImage) {
+        formData.append("image", backendImage);
+      }
+
+      const result = axios.post(
+        `${SERVER_URL}/api/shop/create-edit`,
+        formData,
+        { withCredentials: true }
+      );
+      console.log(result.data);
+      dispatch(setMyShopData(result.data));
+      toast.success(result.data.message || "shop added successful!");
+    } catch (error) {
+      console.log("error : ", error);
+      handleApiError(error, "shop registration failed. Try again.");
+    }
+  };
 
   return (
     <div className="flex justify-center items-center h-screen p-6 bg-gradient-to-b from-orange-50 to-white min-h-screen">
@@ -36,7 +74,7 @@ export default function CreateEditShop() {
             <div className="rounded-full p-4 bg-orange-100">
               <FaUtensils className="text-[#ff4d2d] size-12 " />
             </div>{" "}
-            <div className="font-extrabold text-2xl pt-2">Edit Shop</div>
+            <div className="font-extrabold text-2xl pt-2">{myShopData ? "Edit Shop" :  "Create Shop"}</div>
             <Input
               label="Name"
               placeholder="Enter your Shop Name"
@@ -49,13 +87,21 @@ export default function CreateEditShop() {
               placeholder="Enter your Shop Name"
               type="file"
               accept="image/*"
+              onChange={handleImage}
             />
+            {frontendImage && (
+              <img
+                src={frontendImage}
+                alt=""
+                className="w-full h-48 object-cover rounded-lg border mb-4"
+              />
+            )}
             <div className="flex gap-4">
               <Input
                 label="City"
                 placeholder="Enter your City"
                 type="text"
-                value={city}
+                value={currentCity}
                 onChange={(e) => setCity(e.target.value)}
               />
 
@@ -63,14 +109,14 @@ export default function CreateEditShop() {
                 label="State"
                 placeholder="Enter your State"
                 type="text"
-                value={state}
+                value={currentState}
                 onChange={(e) => setState(e.target.value)}
               />
             </div>
             <Input
               label="Address"
               placeholder="Enter full address"
-              value={address}
+              value={currentAddress}
               onChange={(e) => setAddress(e.target.value)}
             />
             <Button
@@ -78,7 +124,7 @@ export default function CreateEditShop() {
               size="md"
               text="Save"
               extraStyle="justify-center w-full"
-              onClick={() => console.log(name)}
+              onClick={handleSubmit}
             />
           </div>
         </div>
