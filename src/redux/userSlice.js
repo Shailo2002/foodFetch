@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const userSlice = createSlice({
   name: "user",
   initialState: {
+    loading: true,
     userData: null,
     currentCity: null,
     currentState: null,
@@ -11,6 +12,7 @@ export const userSlice = createSlice({
   reducers: {
     setUserData: (state, action) => {
       state.userData = action.payload;
+      state.loading = false;
     },
     setCurrentCity: (state, action) => {
       state.currentCity = action.payload;
@@ -21,6 +23,10 @@ export const userSlice = createSlice({
     setCurrentAddress: (state, action) => {
       state.currentAddress = action.payload;
     },
+    clearUserData: (state) => {
+      state.userData = null;
+      state.loading = false;
+    },
   },
 });
 
@@ -29,6 +35,7 @@ export const {
   setCurrentCity,
   setCurrentState,
   setCurrentAddress,
+  clearUserData,
 } = userSlice.actions;
 
 export default userSlice.reducer;

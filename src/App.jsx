@@ -12,9 +12,17 @@ import SignUp from "./pages/SignUp";
 
 function App() {
   useGetCurrentUser();
-  useGetMyShop()
+  useGetMyShop();
   useGetCity();
-  const {userData} = useSelector((state) => state.user);
+  const { userData, loading } = useSelector((state) => state.user);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Loading...
+      </div>
+    );
+  }
   return (
     <BrowserRouter>
       <ToastContainer

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { SERVER_URL } from "../../Contant";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { setUserData } from "../redux/userSlice";
+import { clearUserData, setUserData } from "../redux/userSlice";
 
 export default function useGetCurrentUser() {
   const dispatch = useDispatch();
@@ -16,6 +16,7 @@ export default function useGetCurrentUser() {
         });
         dispatch(setUserData(result.data));
       } catch (error) {
+        dispatch(clearUserData());
         console.log(error);
         toast.error("error");
       }
