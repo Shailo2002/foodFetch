@@ -37,7 +37,7 @@ function SignUp() {
         { fullName, email, mobile, password, role: selectedRole },
         { withCredentials: true }
       );
-      dispatch(setUserData(result.data));
+      dispatch(setUserData(result?.data));
       toast.success(result.data.message || "Signup successful!");
     } catch (error) {
       handleApiError(error, "Signup failed. Try again.");

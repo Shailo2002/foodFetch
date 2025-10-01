@@ -11,19 +11,30 @@ import { toast } from "react-toastify";
 import { handleApiError } from "../utils/handleApiError";
 import { SERVER_URL } from "../../Contant";
 
-export default function CreateEditShop() {
+export default function AddItems() {
   const navigate = useNavigate();
   const { myShopData } = useSelector((state) => state.owner);
-  const { userData, currentCity, currentState, currentAddress } = useSelector(
-    (state) => state.user
-  );
+  const { userData } = useSelector((state) => state.user);
 
-  const [name, setName] = useState(myShopData?.name || "");
-  const [city, setCity] = useState(currentCity || "");
-  const [state, setState] = useState(currentState || "");
-  const [address, setAddress] = useState(currentAddress || "");
-  const [frontendImage, setFrontendImage] = useState(myShopData?.image || null);
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState(0);
+  const [frontendImage, setFrontendImage] = useState(null);
   const [backendImage, setBackendImage] = useState(null);
+  const [category, setCategory] = useState("");
+  const [foodType, setFoodType] = useState("veg");
+  const categories = [
+    "Snacks",
+    "Main Course",
+    "Desserts",
+    "Pizza",
+    "Burgers",
+    "Sandwiches",
+    "South Indian",
+    "North Indian",
+    "Chinese",
+    "Fast Food",
+    "Others",
+  ];
   const dispatch = useDispatch();
 
   const handleImage = (e) => {
@@ -37,21 +48,24 @@ export default function CreateEditShop() {
     try {
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("city", city);
-      formData.append("state", state);
-      formData.append("address", address);
+      formData.append("price", price);
+      formData.append("category", category);
+      formData.append("foodtype", foodType);
+
       if (backendImage) {
         formData.append("image", backendImage);
       }
 
       const result = await axios.post(
-        `${SERVER_URL}/api/shop/create-edit`,
+        `${SERVER_URL}/api/item/add-item`,
         formData,
-        { withCredentials: true }
+        {
+          withCredentials: true,
+        }
       );
-      console.log("creat edit route ", result?.data);
+      console.log("addItems route : ", result?.data);
       dispatch(setMyShopData(result?.data?.data));
-      toast.success(result?.data?.message || "shop added successful!");
+      toast.success(result.data.message || "shop added successful!");
       navigate("/");
     } catch (error) {
       console.log("error : ", error);
@@ -75,9 +89,7 @@ export default function CreateEditShop() {
             <div className="rounded-full p-4 bg-orange-100">
               <FaUtensils className="text-[#ff4d2d] size-12 " />
             </div>{" "}
-            <div className="font-extrabold text-2xl pt-2">
-              {myShopData ? "Edit Shop" : "Create Shop"}
-            </div>
+            <div className="font-extrabold text-2xl p-2">Add Food</div>
             <Input
               label="Name"
               placeholder="Enter your Shop Name"
@@ -99,29 +111,51 @@ export default function CreateEditShop() {
                 className="w-full h-48 object-cover rounded-lg border mb-4"
               />
             )}
-            <div className="flex gap-4">
-              <Input
-                label="City"
-                placeholder="Enter your City"
-                type="text"
-                value={currentCity}
-                onChange={(e) => setCity(e.target.value)}
-              />
-
-              <Input
-                label="State"
-                placeholder="Enter your State"
-                type="text"
-                value={currentState}
-                onChange={(e) => setState(e.target.value)}
-              />
-            </div>
             <Input
-              label="Address"
-              placeholder="Enter full address"
-              value={currentAddress}
-              onChange={(e) => setAddress(e.target.value)}
+              type="number"
+              label="Price"
+              placeholder="Enter your price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
             />
+            <div className="w-full">
+              <label className="block text-sm font-medium  mb-1">
+                Select Category
+              </label>
+              <select
+                value={category}
+                onChange={(e) => {
+                  setCategory(e.target.value);
+                }}
+                className="bg-gray-50 border border-gray-300  text-sm rounded-lg hover:ring-[#ff4d30] hover:border-gray-500 w-full block p-1.5 focus:outline-none focus:ring-1 focus:ring-[#ff4d30] focus:border-[#ff4d30] mb-4"
+              >
+                <option value="">-- Select Category --</option>{" "}
+                {categories.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="w-full">
+              <label className="block text-sm font-medium  mb-1">
+                Select Food Type
+              </label>
+              <select
+                value={foodType}
+                onChange={(e) => {
+                  setFoodType(e.target.value);
+                }}
+                className="bg-gray-50 border border-gray-300  text-sm rounded-lg hover:ring-[#ff4d30] hover:border-gray-500 w-full block p-1.5 focus:outline-none focus:ring-1 focus:ring-[#ff4d30] focus:border-[#ff4d30] mb-4"
+              >
+                <option key={"veg"} value={"veg"}>
+                  veg
+                </option>
+                <option key={"non veg"} value={"non veg"}>
+                  non veg
+                </option>
+              </select>
+            </div>
             <Button
               variant="primary"
               size="md"

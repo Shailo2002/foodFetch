@@ -19,7 +19,6 @@ export default function Navbar() {
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  console.log("myshopData navbar :", myShopData);
 
   const handleLogOut = async () => {
     try {
