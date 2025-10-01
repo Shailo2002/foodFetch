@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaUtensils } from "react-icons/fa";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
@@ -11,9 +11,9 @@ import { toast } from "react-toastify";
 import { handleApiError } from "../utils/handleApiError";
 import { SERVER_URL } from "../../Contant";
 
-export default function AddItems() {
+export default function EditItem() {
+  const {itemId} = useParams();
   const navigate = useNavigate();
-
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
@@ -21,8 +21,7 @@ export default function AddItems() {
   const [backendImage, setBackendImage] = useState(null);
   const [category, setCategory] = useState("");
   const [foodType, setFoodType] = useState("veg");
-    const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(false)
   const categories = [
     "Snacks",
     "Main Course",
@@ -59,7 +58,7 @@ export default function AddItems() {
       }
 
       const result = await axios.post(
-        `${SERVER_URL}/api/item/add-item`,
+        `${SERVER_URL}/api/item/edit-item/${itemId}`,
         formData,
         {
           withCredentials: true,
@@ -71,10 +70,28 @@ export default function AddItems() {
     } catch (error) {
       console.log("error : ", error);
       handleApiError(error, "shop registration failed. Try again.");
-    }finally{
-      setLoading(false)
+    } finally{
+        setLoading(false)
     }
   };
+
+  useEffect(() => {
+    const getItem = async () => {
+
+      const result = await axios.get(
+        `${SERVER_URL}/api/item/get-item/${itemId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      setName(result?.data?.data?.name || "");
+      setCategory(result?.data?.data?.category || "");
+      setFoodType(result?.data?.data?.foodType || "");
+      setPrice(result?.data?.data?.price || "");
+      setFrontendImage(result?.data?.data?.image || "");
+    };
+    getItem();
+  }, []);
 
   return (
     <div className="flex justify-center items-center h-screen p-6 bg-gradient-to-b from-orange-50 to-white min-h-screen">
@@ -92,7 +109,7 @@ export default function AddItems() {
             <div className="rounded-full p-4 bg-orange-100">
               <FaUtensils className="text-[#ff4d2d] size-12 " />
             </div>{" "}
-            <div className="font-extrabold text-2xl p-2">Add Food</div>
+            <div className="font-extrabold text-2xl p-2">Edit Item</div>
             <Input
               label="Name"
               placeholder="Enter your Shop Name"

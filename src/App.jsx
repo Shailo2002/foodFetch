@@ -10,13 +10,13 @@ import useGetMyShop from "./hooks/useGetMyShop";
 import CreateEditShop from "./pages/CreateEditShop";
 import SignUp from "./pages/SignUp";
 import AddItems from "./pages/AddItems";
+import EditItem from "./pages/EditItem";
 
 function App() {
   useGetCurrentUser();
   useGetMyShop();
   useGetCity();
   const { userData, loading } = useSelector((state) => state.user);
-  console.log("userData : ", userData)
 
   if (loading) {
     return (
@@ -61,6 +61,10 @@ function App() {
         <Route
           path="/add-item"
           element={userData ? <AddItems /> : <Navigate to="/signin" />}
+        />
+        <Route
+          path="/edit-item/:itemId"
+          element={userData ? <EditItem /> : <Navigate to="/signin" />}
         />
       </Routes>
     </BrowserRouter>

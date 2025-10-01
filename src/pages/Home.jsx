@@ -8,7 +8,7 @@ export default function Home() {
   const { userData } = useSelector((state) => state.user);
 
   return (
-    <div>
+    <div className="bg-[#fef4ee] h-100%">
       {" "}
       {userData.data.role == "user" && <UserDashboard />}
       {userData.data.role == "owner" && <OwnerDashboard />}

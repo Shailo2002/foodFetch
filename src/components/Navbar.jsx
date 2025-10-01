@@ -11,6 +11,7 @@ import { handleApiError } from "../utils/handleApiError";
 import { SERVER_URL } from "../../Contant";
 import { clearUserData, setUserData } from "../redux/userSlice";
 import { setMyShopData } from "../redux/ownerSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const { userData } = useSelector((state) => state.user);
@@ -18,7 +19,7 @@ export default function Navbar() {
   const myShopData = useSelector((state) => state.owner.myShopData);
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const navigate = useNavigate();
 
   const handleLogOut = async () => {
     try {
@@ -104,7 +105,7 @@ export default function Navbar() {
                 {" "}
                 <button
                   onClick={() => {
-                    toast.dark("add item");
+                    navigate("/add-item");
                   }}
                   className="min-w-24 text-left px-2 py-1 text-red-500 bg-red-100 hover:bg-red-200 transition flex justify-center cursor-pointer rounded-lg items-center gap-0.5"
                 >
@@ -151,8 +152,7 @@ export default function Navbar() {
               {" "}
               <button
                 onClick={() => {
-                  toast.dark("add item");
-                }}
+navigate("/add-item");                }}
                 className="min-w-24 text-left px-2 py-2 text-red-500 bg-red-100 hover:bg-red-200 transition flex justify-center cursor-pointer rounded-lg items-center gap-0.5"
               >
                 <FaPlus />

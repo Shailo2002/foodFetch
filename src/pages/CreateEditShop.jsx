@@ -24,6 +24,8 @@ export default function CreateEditShop() {
   const [address, setAddress] = useState(currentAddress || "");
   const [frontendImage, setFrontendImage] = useState(myShopData?.image || null);
   const [backendImage, setBackendImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
 
   const handleImage = (e) => {
@@ -34,6 +36,7 @@ export default function CreateEditShop() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -49,13 +52,14 @@ export default function CreateEditShop() {
         formData,
         { withCredentials: true }
       );
-      console.log("creat edit route ", result?.data);
       dispatch(setMyShopData(result?.data?.data));
       toast.success(result?.data?.message || "shop added successful!");
       navigate("/");
     } catch (error) {
       console.log("error : ", error);
       handleApiError(error, "shop registration failed. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -128,6 +132,7 @@ export default function CreateEditShop() {
               text="Save"
               extraStyle="justify-center w-full"
               onClick={handleSubmit}
+              loading={loading}
             />
           </div>
         </div>
