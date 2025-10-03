@@ -19,7 +19,6 @@ export default function useGetMyShop() {
         dispatch(setMyShopData(result?.data?.data));
       } catch (error) {
         console.log(error);
-        toast.error("error");
       }
     };
     fetchShop();

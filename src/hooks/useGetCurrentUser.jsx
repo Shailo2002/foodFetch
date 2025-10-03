@@ -18,7 +18,6 @@ export default function useGetCurrentUser() {
       } catch (error) {
         dispatch(clearUserData());
         console.log(error);
-        toast.error("error");
       }
     };
     fetchUser();

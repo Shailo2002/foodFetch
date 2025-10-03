@@ -8,6 +8,8 @@ export const userSlice = createSlice({
     currentCity: null,
     currentState: null,
     currentAddress: null,
+    shopInMyCity: null,
+    ItemInMyCity: null,
   },
   reducers: {
     setUserData: (state, action) => {
@@ -23,11 +25,19 @@ export const userSlice = createSlice({
     setCurrentAddress: (state, action) => {
       state.currentAddress = action.payload;
     },
+    setShopInMyCity: (state, action) => {
+      state.shopInMyCity = action.payload;
+    },
+    setItemInMyCity: (state, action) => {
+      state.setItemInMyCity = action.payload;
+    },
     clearUserData: (state) => {
       state.userData = null;
-      state.currentCity=null;
-      state.currentAddress=null;
-      state.currentState=null;
+      state.currentCity = null;
+      state.currentAddress = null;
+      state.currentState = null;
+      state.shopInMyCity = null;
+      state.ItemInMyCity = null;
       state.loading = false;
     },
   },
@@ -39,6 +49,8 @@ export const {
   setCurrentState,
   setCurrentAddress,
   clearUserData,
+  setShopInMyCity,
+  setItemInMyCity,
 } = userSlice.actions;
 
 export default userSlice.reducer;

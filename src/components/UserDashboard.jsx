@@ -1,19 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "./Navbar";
 import CategoryCard from "./CategoryCard";
 import { categories } from "../category";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { SERVER_URL } from "../../Contant";
 
 export default function UserDashboard() {
-  const scrollRef = useRef();
+  const CatescrollRef = useRef();
+  const ShopScrollRef = useRef();
+
   const [showCateLeftButton, setShowCateLeftButton] = useState(false);
-    const [showCateRightButton, setShowCateRightButton] = useState(false);
+  const [showCateRightButton, setShowCateRightButton] = useState(false);
+  const [showShopLeftButton, setShowShopLeftButton] = useState(false);
+  const [showShopRightButton, setShowShopRightButton] = useState(false);
+  const { currentCity } = useSelector((state) => state.user);
+  const { shopInMyCity } = useSelector((state) => state.user);
 
+  const updateButton = (ref, setLeftButton, setRightButton) => {
+    const element = ref.current;
+    if (element) {
+      setLeftButton(element.scrollLeft > 0);
+      console.log(element.scrollLeft, element.clientWidth, element.scrollWidth);
 
-  const updateButton = () => {
-
-  }
+      setRightButton(
+        element.scrollLeft + element.clientWidth >= element.scrollWidth
+      );
+    }
+  };
 
   const scroll = (ref, dir) => {
     if (dir === "left") {
@@ -29,39 +45,101 @@ export default function UserDashboard() {
     }
   };
 
+  useEffect(() => {
+    if (CatescrollRef.current) {
+      CatescrollRef.current.addEventListener("scroll", () => {
+        updateButton(
+          CatescrollRef,
+          setShowCateLeftButton,
+          setShowCateRightButton
+        );
+      });
+    }
+    if (ShopScrollRef.current) {
+      ShopScrollRef.current.addEventListener("scroll", () => {
+        updateButton(
+          ShopScrollRef,
+          setShowShopLeftButton,
+          setShowShopRightButton
+        );
+      });
+    }
+  }, []);
+
   return (
     <div className="bg-[#fef4ee] min-h-screen">
       <Navbar />
       <div className="flex justify-center flex-col items-center">
+        {/* shop categories */}
         <div className="w-full max-w-5xl relative">
-          <h2 className="text-lg font-semibold mb-3 text-center">
+          <h2 className="text-lg font-semibold mb-3 pt-6 px-10">
             Inspiration for your first order
           </h2>
 
-          <button
-            onClick={() => scroll(scrollRef, "left")}
-            className="absolute left-0 top-3/5 -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10"
-          >
-            <FaChevronLeft />
-          </button>
+          {showCateLeftButton && (
+            <button
+              onClick={() => scroll(CatescrollRef, "left")}
+              className="absolute left-0 top-3/5 -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10"
+            >
+              <FaChevronLeft />
+            </button>
+          )}
 
           <div
-            ref={scrollRef}
+            ref={CatescrollRef}
             className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide px-10"
           >
-            {categories.map((cate, index) => (
+            {categories?.map((cate, index) => (
               <div className="flex-shrink-0" key={index}>
-                <CategoryCard props={cate} />
+                <CategoryCard name={cate.name} image={cate.image} />
               </div>
             ))}
           </div>
 
-          <button
-            onClick={() => scroll(scrollRef, "right")}
-            className="absolute right-0 top-3/5 -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10"
+          {!showCateRightButton && (
+            <button
+              onClick={() => scroll(CatescrollRef, "right")}
+              className="absolute right-0 top-3/5 -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10"
+            >
+              <FaChevronRight />
+            </button>
+          )}
+        </div>
+
+        {/* shops div */}
+        <div className="w-full max-w-5xl relative">
+          <h2 className="text-lg font-semibold mb-3 pt-6 px-10">
+            {`Best shop in ${currentCity}`}
+          </h2>
+
+          {showShopLeftButton && (
+            <button
+              onClick={() => scroll(ShopScrollRef, "left")}
+              className="absolute left-0 top-3/5 -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10"
+            >
+              <FaChevronLeft />
+            </button>
+          )}
+
+          <div
+            className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide px-10"
+            ref={ShopScrollRef}
           >
-            <FaChevronRight />
-          </button>
+            {shopInMyCity?.map((shop, index) => (
+              <div className="flex-shrink-0" key={index}>
+                <CategoryCard name={shop.name} image={shop.image}/>
+              </div>
+            ))}
+          </div>
+
+          {!showShopRightButton && (
+            <button
+              onClick={() => scroll(ShopScrollRef, "right")}
+              className="absolute right-0 top-3/5 -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10"
+            >
+              <FaChevronRight />
+            </button>
+          )}
         </div>
       </div>
     </div>
