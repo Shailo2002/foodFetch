@@ -29,7 +29,7 @@ export const userSlice = createSlice({
       state.shopInMyCity = action.payload;
     },
     setItemInMyCity: (state, action) => {
-      state.setItemInMyCity = action.payload;
+      state.ItemInMyCity = action.payload;
     },
     clearUserData: (state) => {
       state.userData = null;

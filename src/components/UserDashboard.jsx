@@ -7,6 +7,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { SERVER_URL } from "../../Contant";
+import FoodCard from "./FoodCard";
 
 export default function UserDashboard() {
   const CatescrollRef = useRef();
@@ -16,8 +17,10 @@ export default function UserDashboard() {
   const [showCateRightButton, setShowCateRightButton] = useState(false);
   const [showShopLeftButton, setShowShopLeftButton] = useState(false);
   const [showShopRightButton, setShowShopRightButton] = useState(false);
-  const { currentCity } = useSelector((state) => state.user);
-  const { shopInMyCity } = useSelector((state) => state.user);
+  const { currentCity, shopInMyCity, ItemInMyCity } = useSelector(
+    (state) => state.user
+  );
+
 
   const updateButton = (ref, setLeftButton, setRightButton) => {
     const element = ref.current;
@@ -127,7 +130,7 @@ export default function UserDashboard() {
           >
             {shopInMyCity?.map((shop, index) => (
               <div className="flex-shrink-0" key={index}>
-                <CategoryCard name={shop.name} image={shop.image}/>
+                <CategoryCard name={shop.name} image={shop.image} />
               </div>
             ))}
           </div>
@@ -140,6 +143,21 @@ export default function UserDashboard() {
               <FaChevronRight />
             </button>
           )}
+        </div>
+
+        {/* food items */}
+        <div className="w-full max-w-5xl relative">
+          <h2 className="text-lg font-semibold mb-3 pt-6 px-10">
+            Suggested Food Items
+          </h2>
+
+          <div
+            className="flex h-auto flex-wrap gap-[20px] overflow-x-auto scroll-smooth scrollbar-hide px-10"
+          >
+            {ItemInMyCity?.map((item, index) => (
+                <FoodCard  key={index} data={item}/>
+            ))}
+          </div>
         </div>
       </div>
     </div>
