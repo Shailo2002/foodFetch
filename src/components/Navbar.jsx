@@ -126,7 +126,10 @@ export default function Navbar() {
             )}
 
             {userData.data.role == "user" && (
-              <button className="relative inline-flex items-center text-gray-700 hover:text-[#ff4d30] transition">
+              <button
+                className="relative inline-flex items-center text-gray-700 hover:text-[#ff4d30] transition"
+                onClick={() => navigate("/cart")}
+              >
                 <LuShoppingCart size={24} />
                 <span className="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 z-10 bg-[#ff4d30] text-white text-xs font-semibold px-1.5 py-0.5 rounded-full shadow-md ">
                   {cartItems.length}
@@ -146,7 +149,10 @@ export default function Navbar() {
 
         <div className="flex items-center gap-4 md:hidden">
           {userData?.data?.role === "user" && (
-            <button className="relative inline-flex items-center text-gray-700 hover:text-[#ff4d30] transition">
+            <button
+              className="relative inline-flex items-center text-gray-700 hover:text-[#ff4d30] transition"
+              onClick={() => navigate("/cart")}
+            >
               <LuShoppingCart size={24} />
               <span className="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 z-10 bg-[#ff4d30] text-white text-xs font-semibold px-1.5 py-0.5 rounded-full shadow-md ">
                 {cartItems.length}

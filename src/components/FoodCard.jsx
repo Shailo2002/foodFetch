@@ -1,62 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import { BiSolidLeaf } from "react-icons/bi";
 import { FaDrumstickBite } from "react-icons/fa";
-import { FiPlus, FiMinus } from "react-icons/fi";
-import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../redux/userSlice";
+import {  useSelector } from "react-redux";
+import FoodQuantityEditor from "./FoodQuantityEditor";
 
 function FoodCard({ data }) {
   if (!data) return null;
 
-  const [quantity, setQuantity] = useState(0);
-  const dispatch = useDispatch();
-  const { cartItems } = useSelector((state) => state.user);
+  const itemInCart = useSelector((state) =>
+    state.user.cartItems.find((i) => i.id === data._id)
+  );
   let stars = [];
 
   const renderStar = (rating) => {
     for (let i = 0; i < 5; i++) {
       if (i >= rating) {
-        stars.push(<FaRegStar className="text-yellow-500 text-lg size-3.5" />);
+        stars.push(<FaRegStar className="text-yellow-500 text-lg size-3.5" key={i}/>);
       } else {
-        stars.push(<FaStar className="text-yellow-500 text-lg size-3.5" />);
+        stars.push(<FaStar className="text-yellow-500 text-lg size-3.5" key={i}/>);
       }
     }
     return stars;
-  };
-
-  const handleIncrease = () => {
-    const newQty = quantity + 1;
-    setQuantity(newQty);
-    dispatch(
-      addToCart({
-        id: data._id,
-        image: data.image,
-        name: data.name,
-        quantity: newQty,
-        price: data.price,
-        shop: data.shop,
-        foodtype: data.foodtype,
-      })
-    );
-  };
-
-  const handleDecrease = () => {
-    if (quantity > 0) {
-      const newQty = quantity - 1;
-      setQuantity(newQty);
-      dispatch(
-        addToCart({
-          id: data._id,
-          image: data.image,
-          name: data.name,
-          quantity: newQty,
-          price: data.price,
-          shop: data.shop,
-          foodtype: data.foodtype,
-        })
-      );
-    }
   };
 
   return (
@@ -82,34 +47,8 @@ function FoodCard({ data }) {
         </div>
         <div className="flex justify-between items-center mt-auto p-1 pt-4">
           <div className="text-md font-bold ">₹ {data?.price}</div>
-         
 
-          {/* additional change: */}
-          {quantity ? (
-            <div className="flex border border-[#ffb26b] rounded-md items-center justify-center gap-1 h-7 text-[#a64b00] bg-gradient-to-b from-[#fff7f2] to-[#ffe8d1] shadow-sm">
-              <button
-                className="px-1.5 py-1 h-6.5  transition rounded-l-sm  border-r-1 border-gray-300 hover:bg-[#ffe8d1] active:scale-95
-"
-                onClick={handleDecrease}
-              >
-                {" "}
-                <FiMinus size={12} />
-              </button>
-              <span className="p-1"> {quantity}</span>
-              <button
-                className="px-1.5 py-1 h-6.5 transition rounded-r-sm border-l-1 border-gray-300 hover:bg-[#ffe8d1] active:scale-95
-"
-                onClick={handleIncrease}
-              >
-                {" "}
-                <FiPlus size={12} />{" "}
-              </button>
-            </div>
-          ) : (
-            <div className="flex border border-[#ffb26b] rounded-md items-center justify-center gap-1 h-7 min-w-16 text-[#a64b00] bg-gradient-to-b from-[#fff7f2] to-[#ffe8d1] shadow-sm cursor-pointer" onClick={handleIncrease}>
-              Add
-            </div>
-          )}
+          <FoodQuantityEditor data={data} itemInCart={itemInCart} />
         </div>
       </div>
     </div>

@@ -14,4 +14,4 @@ function CategoryCard({ name, image }) {
   );
 }
 
-export default CategoryCard;
+export default React.memo(CategoryCard);

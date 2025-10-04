@@ -1,0 +1,60 @@
+import React from "react";
+import { IoIosArrowRoundBack } from "react-icons/io";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { IoIosAlert } from "react-icons/io";
+import { Button } from "../ui/Button";
+import CartItemCard from "../components/CartItemCard";
+
+function CartPage() {
+  const { cartItems } = useSelector((store) => store.user);
+  const navigate = useNavigate();
+  return (
+    <div className="flex justify-center p-6 bg-[#fef4ee] min-h-screen w-full">
+      <div className="w-full max-w-[800px] flex justify-center items-center">
+        <div
+          className="absolute top-[20px] left-[20px] z-[10] mb-[10px] cursor-pointer"
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          <IoIosArrowRoundBack size={32} className="text-[#ff4d2d]" />
+        </div>
+        {cartItems.length == 0 ? (
+          <div className="flex flex-col justify-center items-center bg-white border border-gray-300 shadow-md p-6 rounded-xl hover:shadow-2xl">
+            <div
+              className="text-gray-400 mb-4 animate-pulse"
+              style={{ fontSize: "3rem" }}
+              role="img"
+              aria-label="Empty Cart"
+            >
+              <IoIosAlert />
+            </div>
+
+            <h2 className="text-2xl font-semibold text-gray-700 mb-2">
+              Your cart is empty
+            </h2>
+            <p className="text-gray-500 mb-6">
+              Looks like you haven’t added anything yet.
+            </p>
+
+            <Button
+              variant="primary"
+              text="Go to Home"
+              onClick={() => navigate("/")}
+              extraStyle={"p-2"}
+            />
+          </div>
+        ) : (
+          <div className="w-full space-y-4">
+            {cartItems?.map((item, index) => (
+              <CartItemCard key={index} data={item} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default CartPage;
