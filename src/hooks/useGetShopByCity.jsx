@@ -16,7 +16,6 @@ export default function useGetShopByCity() {
           `${SERVER_URL}/api/shop/get-shop-city/${currentCity}`,
           { withCredentials: true }
         );
-        console.log("shop by city hook :", result?.data?.data);
         dispatch(setShopInMyCity(result?.data?.data));
       } catch (error) {
         console.log(error);

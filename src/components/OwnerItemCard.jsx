@@ -19,7 +19,6 @@ export default function OwnerItemCard({ props }) {
           withCredentials: true,
         }
       );
-      console.log(result);
       dispatch(setMyShopData(result?.data?.data));
       toast.success("item deleted successfully");
     } catch (error) {

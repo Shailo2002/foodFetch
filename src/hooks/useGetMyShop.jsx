@@ -15,7 +15,6 @@ export default function useGetMyShop() {
         const result = await axios.get(`${SERVER_URL}/api/shop/get-my`, {
           withCredentials: true,
         });
-        console.log("shop hook :", result?.data?.data);
         dispatch(setMyShopData(result?.data?.data));
       } catch (error) {
         console.log(error);

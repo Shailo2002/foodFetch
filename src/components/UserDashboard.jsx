@@ -1,13 +1,12 @@
-import React, { useEffect } from "react";
 import Navbar from "./Navbar";
 import CategoryCard from "./CategoryCard";
 import { categories } from "../category";
-import { useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import { SERVER_URL } from "../../Contant";
 import FoodCard from "./FoodCard";
+import React, { useEffect, useState, useRef } from "react";
+
 
 export default function UserDashboard() {
   const CatescrollRef = useRef();
@@ -26,7 +25,6 @@ export default function UserDashboard() {
     const element = ref.current;
     if (element) {
       setLeftButton(element.scrollLeft > 0);
-      console.log(element.scrollLeft, element.clientWidth, element.scrollWidth);
 
       setRightButton(
         element.scrollLeft + element.clientWidth >= element.scrollWidth

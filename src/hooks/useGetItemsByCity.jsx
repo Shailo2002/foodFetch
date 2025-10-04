@@ -17,7 +17,6 @@ export default function useGetItemByCity() {
           `${SERVER_URL}/api/item/get-item-city/${currentCity}`,
           { withCredentials: true }
         );
-        console.log("items in my city hook :", result?.data?.data);
         dispatch(setItemInMyCity(result?.data?.data));
       } catch (error) {
         console.log(error);

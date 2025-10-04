@@ -14,8 +14,9 @@ import { setMyShopData } from "../redux/ownerSlice";
 import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-  const { userData } = useSelector((state) => state.user);
-  const { currentCity } = useSelector((state) => state.user);
+  const { userData, currentCity, cartItems } = useSelector(
+    (state) => state.user
+  );
   const myShopData = useSelector((state) => state.owner.myShopData);
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -125,8 +126,11 @@ export default function Navbar() {
             )}
 
             {userData.data.role == "user" && (
-              <button className="text-gray-700 hover:text-[#ff4d30] transition">
-                <LuShoppingCart size={22} />
+              <button className="relative inline-flex items-center text-gray-700 hover:text-[#ff4d30] transition">
+                <LuShoppingCart size={24} />
+                <span className="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 z-10 bg-[#ff4d30] text-white text-xs font-semibold px-1.5 py-0.5 rounded-full shadow-md ">
+                  {cartItems.length}
+                </span>
               </button>
             )}
 
@@ -141,9 +145,12 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-4 md:hidden">
-          {userData.data.role == "user" && (
-            <button className="text-gray-700 hover:text-[#ff4d30] transition">
-              <LuShoppingCart size={22} />
+          {userData?.data?.role === "user" && (
+            <button className="relative inline-flex items-center text-gray-700 hover:text-[#ff4d30] transition">
+              <LuShoppingCart size={24} />
+              <span className="absolute top-0 right-0 translate-x-1/3 -translate-y-1/3 z-10 bg-[#ff4d30] text-white text-xs font-semibold px-1.5 py-0.5 rounded-full shadow-md ">
+                {cartItems.length}
+              </span>
             </button>
           )}
 
@@ -152,7 +159,8 @@ export default function Navbar() {
               {" "}
               <button
                 onClick={() => {
-navigate("/add-item");                }}
+                  navigate("/add-item");
+                }}
                 className="min-w-24 text-left px-2 py-2 text-red-500 bg-red-100 hover:bg-red-200 transition flex justify-center cursor-pointer rounded-lg items-center gap-0.5"
               >
                 <FaPlus />
