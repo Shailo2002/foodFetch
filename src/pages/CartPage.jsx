@@ -7,10 +7,10 @@ import { Button } from "../ui/Button";
 import CartItemCard from "../components/CartItemCard";
 
 function CartPage() {
-  const { cartItems } = useSelector((store) => store.user);
+  const { cartItems, totalAmount } = useSelector((store) => store.user);
   const navigate = useNavigate();
   return (
-    <div className="flex justify-center p-6 bg-[#fef4ee] min-h-screen w-full">
+    <div className="flex justify-center p-6 min-h-screen w-full bg-gradient-to-b from-orange-200 to-white">
       <div className="w-full max-w-[800px] flex justify-center items-center">
         <div
           className="absolute top-[20px] left-[20px] z-[10] mb-[10px] cursor-pointer"
@@ -50,6 +50,13 @@ function CartPage() {
             {cartItems?.map((item, index) => (
               <CartItemCard key={index} data={item} />
             ))}
+            <div className="flex items-center justify-between bg-white p-4 rounded-xl shadow border text-lg font-bold">
+              <div className="">Total Amount</div>
+              <div className="text-[#ff4d2d]">{`₹${totalAmount}`}</div>
+            </div>
+            <div className="flex justify-end">
+              <Button text={"Check Out"} variant={"primary"} extraStyle="p-2 mt-2" onClick={() => navigate("/checkout")}/>
+            </div>
           </div>
         )}
       </div>

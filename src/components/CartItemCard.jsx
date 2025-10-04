@@ -51,9 +51,9 @@ function CartItemCard({ data }) {
           className="w-20 h-20 object-cover rounded-lg border"
         />
         <div>
-          <h1 className="font-medium text-gray-800">{data.name}</h1>
+          <h1 className="font-medium text-gray-500">{data.name}</h1>
           <p className="text-sm text-gray-500">
-            {`₹ ${data.price} × ${data.quantity}`}
+            {`₹${data.price} × ${data.quantity}`}
           </p>
           <p className="font-bold text-gray-900">
             ₹ {data.price * data.quantity}
