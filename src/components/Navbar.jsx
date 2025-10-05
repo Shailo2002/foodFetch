@@ -64,7 +64,7 @@ export default function Navbar() {
       </div>
       <button
         className="w-full text-left px-4 py-2 font-medium hover:bg-gray-50"
-        onClick={() => toast.dark("My Order")}
+        onClick={() => navigate("/my-orders")}
       >
         My Order
       </button>
@@ -114,7 +114,7 @@ export default function Navbar() {
                   Add Item
                 </button>
                 <button
-                  onClick={() => toast.dark("my order")}
+                  onClick={() => navigate("/my-orders")}
                   className="relative min-w-24 text-left px-3 py-2 text-red-500 bg-red-100 hover:bg-red-200 transition flex justify-center items-center cursor-pointer rounded-lg"
                 >
                   Pending Order
@@ -185,7 +185,10 @@ export default function Navbar() {
 
         {menuOpen && (
           <div className="absolute top-[64px] right-0 w-full bg-white border-t border-[#ffe3db] flex flex-col gap-4 p-4 shadow-md md:hidden z-50">
-            <button className="flex items-center gap-2 text-gray-700 hover:text-[#ff4d30] transition">
+            <button
+              className="flex items-center gap-2 text-gray-700 hover:text-[#ff4d30] transition"
+              onClick={() => navigate("/my-orders")}
+            >
               My Orders
             </button>
             <button

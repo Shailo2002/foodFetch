@@ -17,6 +17,7 @@ import CartPage from "./pages/CartPage";
 import CheckOut from "./pages/CheckOut";
 import OrderPlaced from "./pages/OrderPlaced";
 import MyOrders from "./pages/MyOrders";
+import useGetMyOrders from "./hooks/useGetMyOrders";
 
 function App() {
   useGetCurrentUser();
@@ -24,6 +25,7 @@ function App() {
   useGetCity();
   useGetShopByCity();
   useGetItemByCity();
+  useGetMyOrders();
   const { userData, loading } = useSelector((state) => state.user);
 
   if (loading) {

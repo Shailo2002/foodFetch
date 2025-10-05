@@ -1,11 +1,7 @@
-import React from 'react'
+import React, { useEffect } from "react";
 
 function MyOrders() {
-  return (
-    <div>
-      
-    </div>
-  )
+  return <div>My Orders</div>;
 }
 
-export default MyOrders
+export default MyOrders;
