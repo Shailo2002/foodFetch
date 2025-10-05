@@ -12,6 +12,10 @@ import { useDispatch, useSelector } from "react-redux";
 import "leaflet/dist/leaflet.css";
 import { setAddress, setLocation } from "../redux/mapSlice";
 import axios from "axios";
+import { Button } from "../ui/Button";
+import { SERVER_URL } from "../../Contant";
+import { toast } from "react-toastify";
+import { handleApiError } from "../utils/handleApiError";
 
 function CheckOut() {
   const navigate = useNavigate();
@@ -19,6 +23,10 @@ function CheckOut() {
   const [addressInput, setAddressInput] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const { location, address } = useSelector((state) => state.map);
+  const { cartItems, totalAmount } = useSelector((store) => store.user);
+  const deliveryFee = totalAmount > 500 ? 0 : 40;
+  const amountWithDeliveryFee = totalAmount + deliveryFee;
+  console.log("cartitem in checkout ", cartItems);
 
   const apikey = import.meta.env.VITE_GEOAPIKEY;
 
@@ -85,6 +93,35 @@ function CheckOut() {
   useEffect(() => {
     setAddressInput(address);
   }, [address]);
+
+  const handlePlaceOrder = async () => {
+    try {
+      const result = await axios.post(
+        `${SERVER_URL}/api/order/place-order`,
+        {
+          cartItems,
+          paymentMethod,
+          deliveryAddress: {
+            text: addressInput,
+            latitude: location?.lat,
+            longitude: location?.long,
+          },
+        },
+        { withCredentials: true }
+      );
+      console.log(result);
+
+      if (result.data?.success) {
+        toast.success(result.data.message || "Order placed successful!");
+        // dispatch(cartItems([]));
+        navigate("/order-placed");
+      } else {
+        toast.error(result.data?.message || "Order failed");
+      }
+    } catch (error) {
+      handleApiError(error, "Order failed. Try again.");
+    }
+  };
 
   return (
     <div className="flex justify-center items-center p-6 min-h-screen w-full bg-gradient-to-b from-orange-200 to-white">
@@ -165,7 +202,7 @@ function CheckOut() {
               onClick={() => setPaymentMethod("cod")}
             >
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
-                <MdDeliveryDining className="text-green-600 text-xl" />
+                <MdDeliveryDining className="text-green-700 text-xl" />
               </span>
               <div>
                 <p className="font-medium text-gray-800">Cash On Delivery</p>
@@ -184,10 +221,10 @@ function CheckOut() {
               onClick={() => setPaymentMethod("online")}
             >
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
-                <FaMobileAlt className="text-purple-600 text-xl" />
+                <FaMobileAlt className="text-purple-700 text-xl" />
               </span>
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-                <FaCreditCard className="text-blue-600 text-xl" />
+                <FaCreditCard className="text-blue-700 text-xl" />
               </span>
               <div>
                 <p className="font-medium text-gray-800">
@@ -197,6 +234,61 @@ function CheckOut() {
               </div>
             </div>
           </div>
+        </section>
+
+        <section>
+          <h2 className="flex gap-2 items-center text-lg font-semibold text-gray-800">
+            Order Summary
+          </h2>
+          <div className="rounded-xl overflow-hidden border py-2 px-3 mt-2">
+            <div className="border-b border-gray-100 shadow-sm my-2">
+              {cartItems.map((item, index) => (
+                <div
+                  className="flex items-center justify-between text-sm text-gray-500 my-1"
+                  key={index}
+                >
+                  <div>
+                    <span>{`${item.name} x `}</span>
+                    <span>{`${item.quantity}`}</span>
+                  </div>
+                  <div>{`₹${item.price}`}</div>
+                </div>
+              ))}
+            </div>
+            <div>
+              <div className="flex items-center justify-between text-md font-semibold my-1">
+                <div>
+                  <span>Subtotal</span>
+                </div>
+                <div>{`₹${totalAmount}`}</div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between text-sm text-gray-500 my-1">
+                <div>
+                  <span>Delivery fee</span>
+                </div>
+                <div>{`₹${deliveryFee}`}</div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between text-lg font-bold my-3 text-[#ff4d30]">
+                <div>
+                  <span>Total</span>
+                </div>
+                <div>{`₹${amountWithDeliveryFee}`}</div>
+              </div>
+            </div>
+          </div>
+          <Button
+            variant="primary"
+            text={paymentMethod == "cod" ? "Place Order" : "Pay & Place Order"}
+            type="text"
+            extraStyle="w-full mt-4 rounded-xl"
+            onClick={() => handlePlaceOrder()}
+          />
         </section>
       </div>
     </div>
