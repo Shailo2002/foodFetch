@@ -16,6 +16,7 @@ import { Button } from "../ui/Button";
 import { SERVER_URL } from "../../Contant";
 import { toast } from "react-toastify";
 import { handleApiError } from "../utils/handleApiError";
+import { AddMyOrder } from "../redux/userSlice";
 
 function CheckOut() {
   const navigate = useNavigate();
@@ -109,11 +110,12 @@ function CheckOut() {
         },
         { withCredentials: true }
       );
-      console.log(result);
+      console.log(result?.data?.data);
 
       if (result.data?.success) {
         toast.success(result.data.message || "Order placed successful!");
         // dispatch(cartItems([]));
+        dispatch(AddMyOrder(result?.data?.data));
         navigate("/order-placed");
       } else {
         toast.error(result.data?.message || "Order failed");
