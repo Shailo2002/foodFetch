@@ -78,6 +78,12 @@ export const userSlice = createSlice({
     AddMyOrder: (state, action) => {
       state.myOrders = [action.payload, ...state.myOrders];
     },
+    updateOrderStatus: (state, action) => {
+      const { orderId, shopId, status } = action.payload;
+      const order = state.myOrders.find({ _id: orderId });
+      const shopOrder = order.shopOrder.find((temp) => temp._id == shopId);
+      shopOrder.status = status;
+    },
     clearUserData: (state) => {
       state.userData = null;
       state.currentCity = null;
@@ -106,6 +112,7 @@ export const {
   deletefromCart,
   setMyOrders,
   AddMyOrder,
+  updateOrderStatus,
 } = userSlice.actions;
 
 export default userSlice.reducer;

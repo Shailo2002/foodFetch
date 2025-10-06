@@ -1,6 +1,10 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { IoMdCall } from "react-icons/io";
 import { MdLocationOn } from "react-icons/md";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { SERVER_URL } from "../../Contant";
 
 function OwnerOrderCard({ data }) {
   const [orderStatus, setOrderStatus] = useState(data?.shopOrders?.status);
@@ -10,6 +14,27 @@ function OwnerOrderCard({ data }) {
     preparing: "bg-blue-100 text-blue-700",
     out_for_delivery: "bg-purple-100 text-purple-700",
     delivered: "bg-green-100 text-green-700",
+  };
+
+  const handleUpdateStatus = async (newOrderStatus) => {
+    try {
+      const result = await axios.post(
+        `${SERVER_URL}/api/order/update-status/${data?._id}/${data?.shopOrders?.shop?._id}`,
+        {
+          status: newOrderStatus,
+        },
+        { withCredentials: true }
+      );
+      console.log(result?.data?.data);
+
+      if (result.data?.success) {
+        toast.success(result.data.message || "Order placed successful!");
+      } else {
+        toast.error(result.data?.message || "Order failed");
+      }
+    } catch (error) {
+      handleApiError(error, "Order failed. Try again.");
+    }
   };
 
   return (
@@ -79,9 +104,13 @@ function OwnerOrderCard({ data }) {
         </div>
         <select
           value={orderStatus}
-          onChange={(e) => setOrderStatus(e.target.value)}
+          onChange={(e) => {
+            setOrderStatus(e.target.value);
+            handleUpdateStatus(e.target.value);
+          }}
           className="rounded-md border border-[#ff4d30] text-[#ff4d30] px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#ff4d30] bg-white cursor-pointer"
         >
+          <option value="">Change</option>
           <option value="pending">Pending</option>
           <option value="preparing">Preparing</option>
           <option value="out_for_delivery">Out for Delivery</option>
