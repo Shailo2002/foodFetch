@@ -80,9 +80,12 @@ export const userSlice = createSlice({
     },
     updateOrderStatus: (state, action) => {
       const { orderId, shopId, status } = action.payload;
-      const order = state.myOrders.find({ _id: orderId });
-      const shopOrder = order.shopOrder.find((temp) => temp._id == shopId);
-      shopOrder.status = status;
+      const order = state.myOrders.find((o) => o._id == orderId);
+      if (order) {
+        if (order.shopOrders && order.shopOrders.shop._id == shopId) {
+          order.shopOrders.status = status;
+        }
+      }
     },
     clearUserData: (state) => {
       state.userData = null;

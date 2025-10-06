@@ -25,7 +25,7 @@ function SignUp() {
   const roles = [
     { key: "user", label: "user" },
     { key: "owner", label: "owner" },
-    { key: "deliveryBoy", label: "deliveryBoy" },
+    { key: "delivery_boy", label: "delivery_boy" },
   ];
 
   const handleSignup = async () => {

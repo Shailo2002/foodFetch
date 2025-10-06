@@ -2,12 +2,15 @@ import axios from "axios";
 import React, { useState } from "react";
 import { IoMdCall } from "react-icons/io";
 import { MdLocationOn } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { SERVER_URL } from "../../Contant";
+import { handleApiError } from "../utils/handleApiError";
+import { updateOrderStatus } from "../redux/userSlice";
 
 function OwnerOrderCard({ data }) {
-  const [orderStatus, setOrderStatus] = useState(data?.shopOrders?.status);
+  // const [orderStatus, setOrderStatus] = useState(data?.shopOrders?.status);
+  const dispatch = useDispatch();
 
   const statusColors = {
     pending: "bg-yellow-100 text-yellow-700",
@@ -16,21 +19,26 @@ function OwnerOrderCard({ data }) {
     delivered: "bg-green-100 text-green-700",
   };
 
-  const handleUpdateStatus = async (newOrderStatus) => {
+  const handleUpdateStatus = async (status,orderId, shopId) => {
     try {
       const result = await axios.post(
-        `${SERVER_URL}/api/order/update-status/${data?._id}/${data?.shopOrders?.shop?._id}`,
-        {
-          status: newOrderStatus,
-        },
+        `${SERVER_URL}/api/order/update-status/${orderId}/${shopId}`,
+        { status: status },
         { withCredentials: true }
       );
-      console.log(result?.data?.data);
+      console.log(result.data.success);
 
       if (result.data?.success) {
-        toast.success(result.data.message || "Order placed successful!");
+        dispatch(
+          updateOrderStatus({
+            orderId,
+            shopId,
+            status,
+          })
+        );
+        toast.success(result.data.message || "Order status updated!");
       } else {
-        toast.error(result.data?.message || "Order failed");
+        toast.error(result.data?.message || "Order update failed");
       }
     } catch (error) {
       handleApiError(error, "Order failed. Try again.");
@@ -53,10 +61,11 @@ function OwnerOrderCard({ data }) {
         </div>
         <div
           className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
-            statusColors[orderStatus] || "bg-gray-100 text-gray-700"
+            statusColors[data?.shopOrders?.status] ||
+            "bg-gray-100 text-gray-700"
           }`}
         >
-          {orderStatus}
+          {data?.shopOrders?.status}
         </div>
       </div>
 
@@ -103,10 +112,9 @@ function OwnerOrderCard({ data }) {
           <span className="font-medium">Change Status:</span>
         </div>
         <select
-          value={orderStatus}
+          value={data?.shopOrders?.status}
           onChange={(e) => {
-            setOrderStatus(e.target.value);
-            handleUpdateStatus(e.target.value);
+            handleUpdateStatus(e.target.value,data._id, data.shopOrders.shop._id);
           }}
           className="rounded-md border border-[#ff4d30] text-[#ff4d30] px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#ff4d30] bg-white cursor-pointer"
         >
