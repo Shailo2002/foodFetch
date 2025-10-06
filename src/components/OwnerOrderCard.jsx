@@ -9,7 +9,7 @@ import { handleApiError } from "../utils/handleApiError";
 import { updateOrderStatus } from "../redux/userSlice";
 
 function OwnerOrderCard({ data }) {
-  // const [orderStatus, setOrderStatus] = useState(data?.shopOrders?.status);
+  const [availableBoys, setAvailableBoys] = useState([]);
   const dispatch = useDispatch();
 
   const statusColors = {
@@ -19,14 +19,15 @@ function OwnerOrderCard({ data }) {
     delivered: "bg-green-100 text-green-700",
   };
 
-  const handleUpdateStatus = async (status,orderId, shopId) => {
+  const handleUpdateStatus = async (status, orderId, shopId) => {
     try {
       const result = await axios.post(
         `${SERVER_URL}/api/order/update-status/${orderId}/${shopId}`,
         { status: status },
         { withCredentials: true }
       );
-      console.log(result.data.success);
+      console.log(result?.data);
+      setAvailableBoys(result?.data?.data?.availableBoys);
 
       if (result.data?.success) {
         dispatch(
@@ -114,7 +115,11 @@ function OwnerOrderCard({ data }) {
         <select
           value={data?.shopOrders?.status}
           onChange={(e) => {
-            handleUpdateStatus(e.target.value,data._id, data.shopOrders.shop._id);
+            handleUpdateStatus(
+              e.target.value,
+              data._id,
+              data.shopOrders.shop._id
+            );
           }}
           className="rounded-md border border-[#ff4d30] text-[#ff4d30] px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#ff4d30] bg-white cursor-pointer"
         >
