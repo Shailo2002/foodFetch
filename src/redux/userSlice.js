@@ -12,7 +12,7 @@ export const userSlice = createSlice({
     ItemInMyCity: null,
     cartItems: [],
     totalAmount: 0,
-    myOrders:null,
+    myOrders:[],
   },
   reducers: {
     setUserData: (state, action) => {
@@ -86,6 +86,7 @@ export const userSlice = createSlice({
       state.loading = false;
       state.cartItems = [];
       state.totalAmount = 0;
+      state.myOrders = [];
     },
   },
 });
