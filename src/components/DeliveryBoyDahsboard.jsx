@@ -23,6 +23,19 @@ export default function DeliveryBoyDahsboard() {
     }
   };
 
+  const acceptOrder = async (assignmentId) => {
+    try {
+      const result = await axios.get(
+        `${SERVER_URL}/api/order/accept-order/${assignmentId}`,
+        { withCredentials: true }
+      );
+      console.log("order accepted ", result?.data);
+      toast.success(result?.data?.message || "shop added successful!");
+    } catch (error) {
+      handleApiError(error, "Order failed. Try again.");
+    }
+  };
+
   useEffect(() => {
     handleGetAssignments();
   }, [userData]);
@@ -74,7 +87,11 @@ export default function DeliveryBoyDahsboard() {
                       {b?.items.length} items | ₹{b?.subtotal}
                     </p>
                   </div>
-                  <Button text="Accept" extraStyle="px-2 h-8 flex items-center"/>
+                  <Button
+                    text="Accept"
+                    extraStyle="px-2 h-8 flex items-center"
+                    onClick={() => acceptOrder(b?.assignmentId)}
+                  />
                 </div>
               ))}
             </div>
