@@ -8,7 +8,6 @@ export default function useGetMyOrders() {
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.user?.id);
   useEffect(() => {
-    console.log("useEffect in myorder ");
     const fetchOrders = async () => {
       try {
         const result = await axios.get(`${SERVER_URL}/api/order/my-orders`, {

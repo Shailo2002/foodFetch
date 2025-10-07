@@ -14,7 +14,6 @@ export default function useUpdateLocation() {
         { lat, lon },
         { withCredentials: true }
       );
-      console.log(result);
     };
 
     navigator.geolocation.watchPosition((pos) => {

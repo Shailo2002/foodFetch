@@ -10,6 +10,7 @@ import { updateOrderStatus } from "../redux/userSlice";
 
 function OwnerOrderCard({ data }) {
   const [availableBoys, setAvailableBoys] = useState([]);
+  console.log("availabelBoys : ", availableBoys)
   const dispatch = useDispatch();
 
   const statusColors = {
@@ -129,6 +130,36 @@ function OwnerOrderCard({ data }) {
           <option value="out_for_delivery">Out for Delivery</option>
         </select>
       </div>
+
+      {data?.shopOrders?.status === "out_for_delivery" && (
+        <div className="bg-orange-50 rounded-lg p-3 mt-4 mb-4">
+          <h3 className="text-orange-700 font-semibold mb-2">
+            Available Delivery Boys
+          </h3>
+          {availableBoys.length > 0 ? (
+            <div className="space-y-2">
+              {availableBoys.map((b, i) => (
+                <div
+                  key={i}
+                  className="flex justify-between items-center bg-white rounded-md p-2 shadow-sm hover:bg-orange-100 transition"
+                >
+                  <div>
+                    <p className="font-medium text-gray-800">{b.fullName}</p>
+                    <p className="text-sm text-gray-500">{b.mobile}</p>
+                  </div>
+                  <span className="text-xs text-gray-400">
+                    {b.latitude.toFixed(2)}, {b.longitude.toFixed(2)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-600 text-sm italic">
+              No delivery boy available
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Total */}
       <div className="text-right mt-4 font-semibold text-gray-900 text-sm">

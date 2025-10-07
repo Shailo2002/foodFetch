@@ -27,7 +27,6 @@ function CheckOut() {
   const { cartItems, totalAmount } = useSelector((store) => store.user);
   const deliveryFee = totalAmount > 500 ? 0 : 40;
   const amountWithDeliveryFee = totalAmount + deliveryFee;
-  console.log("cartitem in checkout ", cartItems);
 
   const apikey = import.meta.env.VITE_GEOAPIKEY;
 
@@ -72,14 +71,12 @@ function CheckOut() {
 
   const getLatLongByAddress = async () => {
     try {
-      console.log("result : ");
 
       const result = await axios.get(
         `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
           addressInput
         )}&format=json&apiKey=${apikey}`
       );
-      console.log("result : ", result?.data?.results[0]?.formatted);
       dispatch(
         setLocation({
           lat: result?.data?.results[0]?.lat,
@@ -110,7 +107,6 @@ function CheckOut() {
         },
         { withCredentials: true }
       );
-      console.log(result?.data?.data);
 
       if (result.data?.success) {
         toast.success(result.data.message || "Order placed successful!");
