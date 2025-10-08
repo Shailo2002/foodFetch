@@ -6,12 +6,15 @@ import { handleApiError } from "../utils/handleApiError";
 import { SERVER_URL } from "../../Contant";
 import { Button } from "../ui/Button";
 import DeliveryBoyTracking from "./DeliveryBoyTracking";
-
+import { Input } from "../ui/Input";
 
 export default function DeliveryBoyDahsboard() {
   const { userData } = useSelector((state) => state.user);
   const [availableAssignments, setAvailableAssignments] = useState(null);
   const [currentOrder, setCurrentOrder] = useState(null);
+  const [showOtpBox, setShowOtpBox] = useState(true);
+  const [loading, setLoading] = useState();
+  const [otp, setOtp] = useState("");
 
   const handleGetAssignments = async () => {
     try {
@@ -38,6 +41,31 @@ export default function DeliveryBoyDahsboard() {
       toast.success(result?.data?.message || "shop added successful!");
     } catch (error) {
       handleApiError(error, "Order failed. Try again.");
+    }
+  };
+
+  const handleSendOtp = async () => {
+    if (!currentOrder?.user?.email)
+      return toast.error("Please enter your email");
+
+    try {
+      setLoading(true);
+      const result = await axios.post(
+        `${SERVER_URL}/api/auth/send-otp`,
+        { email: currentOrder?.user?.email },
+        { withCredentials: true }
+      );
+
+      if (result.data?.success) {
+        toast.success(result.data.message || "OTP sent successfully");
+        setStep(2);
+      } else {
+        toast.error(result.data?.message || "Failed to send OTP");
+      }
+    } catch (error) {
+      handleApiError(error, "Failed to send OTP");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -145,6 +173,33 @@ export default function DeliveryBoyDahsboard() {
               </p>
             </div>
             <DeliveryBoyTracking data={currentOrder} />
+
+            {!showOtpBox && (
+              <Button
+                extraStyle="px-2 w-full mt-4"
+                text="Mark As Delivered"
+                onClick={() => {
+                  handleSendOtp();
+                  setShowOtpBox(true);
+                }}
+              />
+            )}
+            {showOtpBox && (
+              <div className="bg-orange-50 border border-orange-400 rounded-lg p-3 mt-6 ">
+                <div className="mt-4">
+                  <Input
+                    label="Verify OTP from customer"
+                    placeholder="Enter OTP"
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    extraStyle=""
+                  />
+                </div>
+
+                <Button text="Verify" extraStyle="px-2 w-full" />
+              </div>
+            )}
           </div>
         )}
       </main>
