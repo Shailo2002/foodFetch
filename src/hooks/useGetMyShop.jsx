@@ -2,7 +2,6 @@ import axios from "axios";
 import { useEffect } from "react";
 import { SERVER_URL } from "../../Contant";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import { setMyShopData } from "../redux/ownerSlice";
 
 export default function useGetMyShop() {

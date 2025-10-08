@@ -5,10 +5,13 @@ import axios from "axios";
 import { handleApiError } from "../utils/handleApiError";
 import { SERVER_URL } from "../../Contant";
 import { Button } from "../ui/Button";
+import DeliveryBoyTracking from "./DeliveryBoyTracking";
+
 
 export default function DeliveryBoyDahsboard() {
   const { userData } = useSelector((state) => state.user);
   const [availableAssignments, setAvailableAssignments] = useState(null);
+  const [currentOrder, setCurrentOrder] = useState(null);
 
   const handleGetAssignments = async () => {
     try {
@@ -30,6 +33,22 @@ export default function DeliveryBoyDahsboard() {
         { withCredentials: true }
       );
       console.log("order accepted ", result?.data);
+      getCurrentOrder();
+
+      toast.success(result?.data?.message || "shop added successful!");
+    } catch (error) {
+      handleApiError(error, "Order failed. Try again.");
+    }
+  };
+
+  const getCurrentOrder = async () => {
+    try {
+      const result = await axios.get(
+        `${SERVER_URL}/api/order/get-current-order`,
+        { withCredentials: true }
+      );
+      console.log("get current Order ", result?.data?.data);
+      setCurrentOrder(result?.data?.data);
       toast.success(result?.data?.message || "shop added successful!");
     } catch (error) {
       handleApiError(error, "Order failed. Try again.");
@@ -38,6 +57,7 @@ export default function DeliveryBoyDahsboard() {
 
   useEffect(() => {
     handleGetAssignments();
+    getCurrentOrder();
   }, [userData]);
 
   return (
@@ -64,43 +84,69 @@ export default function DeliveryBoyDahsboard() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-3 mt-4 mb-4 shadow w-full max-w-[800px]">
-          <h3 className="text-[#ff4d30] font-semibold mb-2 ">
-            Available Delivery
-          </h3>
-          {availableAssignments?.length > 0 ? (
-            <div className="space-y-3">
-              {availableAssignments.map((b, i) => (
-                <div
-                  key={i}
-                  className="flex justify-between items-center border border-orange-100 rounded-md p-2 shadow-sm hover:bg-orange-50 transition"
-                >
-                  <div>
-                    <p className="font-medium text-gray-800">{b?.shopName}</p>
-                    <p className="text-[13px] text-gray-500">
-                      <span className="text-[13px] text-gray-800">
-                        Delivery Address :
-                      </span>{" "}
-                      {b?.deliveryAddress?.text}
-                    </p>
-                    <p className="text-[13px] text-gray-600">
-                      {b?.items.length} items | ₹{b?.subtotal}
-                    </p>
+        {!currentOrder && (
+          <div className="bg-white rounded-lg p-3 mt-4 mb-4 shadow w-full max-w-[800px]">
+            <h3 className="text-[#ff4d30] font-semibold mb-2 ">
+              Available Orders
+            </h3>
+            {availableAssignments?.length > 0 ? (
+              <div className="space-y-3">
+                {availableAssignments.map((b, i) => (
+                  <div
+                    key={i}
+                    className="flex justify-between items-center border border-orange-100 rounded-md p-2 shadow-sm hover:bg-orange-50 transition"
+                  >
+                    <div>
+                      <p className="font-medium text-gray-800">{b?.shopName}</p>
+                      <p className="text-[13px] text-gray-500">
+                        <span className="text-[13px] text-gray-800">
+                          Delivery Address :
+                        </span>{" "}
+                        {b?.deliveryAddress?.text}
+                      </p>
+                      <p className="text-[13px] text-gray-600">
+                        {b?.items.length} items | ₹{b?.subtotal}
+                      </p>
+                    </div>
+                    <Button
+                      text="Accept"
+                      extraStyle="px-2 h-8 flex items-center"
+                      onClick={() => acceptOrder(b?.assignmentId)}
+                    />
                   </div>
-                  <Button
-                    text="Accept"
-                    extraStyle="px-2 h-8 flex items-center"
-                    onClick={() => acceptOrder(b?.assignmentId)}
-                  />
-                </div>
-              ))}
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600 text-sm italic">
+                No delivery available
+              </p>
+            )}
+          </div>
+        )}
+
+        {currentOrder && (
+          <div className="bg-white rounded-lg p-3 mt-4 mb-4 shadow w-full max-w-[800px]">
+            <h3 className="text-[#ff4d30] font-semibold mb-2 ">
+              📦Current Orders
+            </h3>
+            <div>
+              <p className="font-medium text-gray-800">
+                {currentOrder?.shop?.name}
+              </p>
+              <p className="text-[13px] text-gray-500">
+                <span className="text-[13px] text-gray-800">
+                  Delivery Address :
+                </span>{" "}
+                {currentOrder?.deliveryAddress?.text}
+              </p>
+              <p className="text-[13px] text-gray-600">
+                {currentOrder?.shopOrder?.shopOrderItems.length} items | ₹
+                {currentOrder?.shopOrder?.subTotal}
+              </p>
             </div>
-          ) : (
-            <p className="text-gray-600 text-sm italic">
-              No delivery available
-            </p>
-          )}
-        </div>
+            <DeliveryBoyTracking data={currentOrder} />
+          </div>
+        )}
       </main>
     </div>
   );
