@@ -34,8 +34,6 @@ function DeliveryBoyTracking({ data }) {
   const customerLat = data?.curstomerLocation?.lat;
   const customerLon = data?.curstomerLocation?.lon;
 
-  console.log("live tracking data : ", data);
-
   const center = [deliveryBoyLat, deliveryBoyLon];
 
   useEffect(() => {
@@ -70,9 +68,6 @@ function DeliveryBoyTracking({ data }) {
         const summary = routeData.features[0].properties.summary;
         setDistance(summary.distance / 1000);
         setEstimatedTime(Math.round(summary.duration / 60));
-        console.log("Distance:", typeof (summary.distance / 1000), "km");
-        console.log("Duration:", Math.round(summary.duration / 60), "min");
-
         setRouteCoords(coords);
       } catch (error) {
         console.error(

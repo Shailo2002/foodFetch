@@ -22,7 +22,6 @@ function CartItemCard({ data }) {
   };
 
   const handleDecrease = (id, quantity) => {
-    console.log("decrease call ");
     const newQty = (quantity || 0) - 1;
     if (newQty >= 0) {
       dispatch(

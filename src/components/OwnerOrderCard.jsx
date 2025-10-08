@@ -10,7 +10,6 @@ import { updateOrderStatus } from "../redux/userSlice";
 
 function OwnerOrderCard({ data }) {
   const [availableBoys, setAvailableBoys] = useState([]);
-  console.log("availabelBoys : ", availableBoys);
   const dispatch = useDispatch();
 
   const statusColors = {
@@ -27,7 +26,6 @@ function OwnerOrderCard({ data }) {
         { status: status },
         { withCredentials: true }
       );
-      console.log(result?.data);
       setAvailableBoys(result?.data?.data?.availableBoys);
 
       if (result.data?.success) {
