@@ -13,7 +13,7 @@ export default function DeliveryBoyDahsboard() {
   const { userData } = useSelector((state) => state.user);
   const [availableAssignments, setAvailableAssignments] = useState(null);
   const [currentOrder, setCurrentOrder] = useState(null);
-  const [showOtpBox, setShowOtpBox] = useState(true);
+  const [showOtpBox, setShowOtpBox] = useState(false);
   const [loading, setLoading] = useState(false);
   const [otp, setOtp] = useState("");
 

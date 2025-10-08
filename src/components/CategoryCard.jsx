@@ -1,8 +1,12 @@
 import React from "react";
 
-function CategoryCard({ name, image }) {
+function CategoryCard({ name, image, selectedCategory }) {
   return (
-    <div className="relative border-2 border-[#9e4816] rounded-2xl shadow-xl shadow-gray-200 hover:shadow-lg transition-shadow">
+    <div
+      className={`relative border-2 border-[#9e4816] rounded-2xl shadow-xl shadow-gray-200 hover:shadow-lg transition-shadow ${
+        selectedCategory === name && "border-5 border-green-400 "
+      }`}
+    >
       <img
         src={image}
         className="w-30 h-30 object-cover object-center rounded-xl hover:scale-110 transition-transform duration-300 "

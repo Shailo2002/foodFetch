@@ -6,20 +6,21 @@ import { useSelector } from "react-redux";
 import { SERVER_URL } from "../../Contant";
 import FoodCard from "./FoodCard";
 import React, { useEffect, useState, useRef } from "react";
-
+import { useNavigate } from "react-router-dom";
 
 export default function UserDashboard() {
   const CatescrollRef = useRef();
   const ShopScrollRef = useRef();
-
+  const navigate = useNavigate();
   const [showCateLeftButton, setShowCateLeftButton] = useState(false);
   const [showCateRightButton, setShowCateRightButton] = useState(false);
   const [showShopLeftButton, setShowShopLeftButton] = useState(false);
   const [showShopRightButton, setShowShopRightButton] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const { currentCity, shopInMyCity, ItemInMyCity } = useSelector(
     (state) => state.user
   );
-
+  const [updatedItemList, setUpdatedItemList] = useState(ItemInMyCity);
 
   const updateButton = (ref, setLeftButton, setRightButton) => {
     const element = ref.current;
@@ -32,15 +33,26 @@ export default function UserDashboard() {
     }
   };
 
+  const handleFilterByCategory = (category) => {
+    if (category == "All") {
+      setUpdatedItemList(ItemInMyCity);
+    } else {
+      const newItemList = ItemInMyCity.filter(
+        (item) => item.category === category
+      );
+      setUpdatedItemList(newItemList);
+    }
+  };
+
   const scroll = (ref, dir) => {
     if (dir === "left") {
       ref.current.scrollBy({
-        left: dir == "left" ? -200 : 200,
+        left: dir == "left" ? -138 : 200,
         behavior: "smooth",
       });
     } else {
       ref.current.scrollBy({
-        left: dir == "right" ? +200 : 200,
+        left: dir == "right" ? +138 : 200,
         behavior: "smooth",
       });
     }
@@ -67,6 +79,10 @@ export default function UserDashboard() {
     }
   }, []);
 
+  useEffect(() => {
+    setUpdatedItemList(ItemInMyCity);
+  }, [ItemInMyCity]);
+
   return (
     <div className="bg-[#fef4ee] min-h-screen">
       <Navbar />
@@ -80,7 +96,7 @@ export default function UserDashboard() {
           {showCateLeftButton && (
             <button
               onClick={() => scroll(CatescrollRef, "left")}
-              className="absolute left-0 top-3/5 -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10"
+              className="absolute left-0 top-3/5 -translate-y-1/2 bg-white shadow-md rounded-full p-2 z-10 "
             >
               <FaChevronLeft />
             </button>
@@ -88,11 +104,24 @@ export default function UserDashboard() {
 
           <div
             ref={CatescrollRef}
-            className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide px-10"
+            className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide mx-8"
           >
             {categories?.map((cate, index) => (
-              <div className="flex-shrink-0" key={index}>
-                <CategoryCard name={cate.name} image={cate.image} />
+              <div
+                className={`flex-shrink-0 ${
+                  selectedCategory == cate.category && ""
+                }`}
+                key={index}
+                onClick={() => {
+                  setSelectedCategory(cate?.category);
+                  handleFilterByCategory(cate?.category);
+                }}
+              >
+                <CategoryCard
+                  name={cate?.category}
+                  image={cate?.image}
+                  selectedCategory={selectedCategory}
+                />
               </div>
             ))}
           </div>
@@ -127,7 +156,11 @@ export default function UserDashboard() {
             ref={ShopScrollRef}
           >
             {shopInMyCity?.map((shop, index) => (
-              <div className="flex-shrink-0" key={index}>
+              <div
+                className="flex-shrink-0"
+                key={index}
+                onClick={() => navigate(`/shop/${shop._id}`)}
+              >
                 <CategoryCard name={shop.name} image={shop.image} />
               </div>
             ))}
@@ -149,11 +182,9 @@ export default function UserDashboard() {
             Suggested Food Items
           </h2>
 
-          <div
-            className="flex h-auto flex-wrap gap-[20px] overflow-x-auto scroll-smooth scrollbar-hide px-10"
-          >
-            {ItemInMyCity?.map((item, index) => (
-                <FoodCard  key={index} data={item}/>
+          <div className="flex h-auto items-center justify-center flex-wrap gap-[20px] overflow-x-auto scroll-smooth scrollbar-hide px-10">
+            {updatedItemList?.map((item, index) => (
+              <FoodCard key={index} data={item} />
             ))}
           </div>
         </div>
