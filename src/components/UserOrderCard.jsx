@@ -1,8 +1,10 @@
 import React from "react";
 import { Button } from "../ui/Button";
 import { MdOutlineAccessTime } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 function UserOrderCard({ data }) {
+  const navigate = useNavigate()
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString("en-GB", {
@@ -104,6 +106,7 @@ function UserOrderCard({ data }) {
         <Button
           text="Track Order"
           extraStyle="px-3 py-1 text-sm font-semibold bg-[#ff4d30] hover:bg-[#ff674d] text-white rounded-full shadow-sm transition-all duration-200"
+          onClick={() => navigate(`/track-order/${data._id}`)}
         />
       </div>
     </div>

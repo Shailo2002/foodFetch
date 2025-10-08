@@ -34,6 +34,8 @@ function DeliveryBoyTracking({ data }) {
   const customerLat = data?.curstomerLocation?.lat;
   const customerLon = data?.curstomerLocation?.lon;
 
+  console.log("live tracking data : ", data);
+
   const center = [deliveryBoyLat, deliveryBoyLon];
 
   useEffect(() => {
@@ -89,13 +91,22 @@ function DeliveryBoyTracking({ data }) {
 
   return (
     <div className="w-full h-[400px] overflow-hidden mt-3 rounded-xl shadow-md">
-      <div>
-        Distance : {Math.trunc(distance)} KM
+      <div className="flex justify-between items-center bg-orange-50/60 border border-gray-100 text-sm text-gray-700 font-medium px-4 py-2 rounded-t-xl">
+        <div>
+          <span className="font-semibold text-gray-900">Distance: </span>
+          {distance ? `${Math.trunc(distance)} KM` : "Calculating..."}
+        </div>
+        <div>
+          <span className="font-semibold text-gray-900">Estimate Time: </span>
+          {estimatedTime ? `${estimatedTime} Min` : "Calculating..."}
+        </div>
       </div>
-      <div>
-        Estimate Time : {estimatedTime} Min
-      </div>
-      <MapContainer center={center} zoom={14} className="w-full h-full rounded-lg">
+
+      <MapContainer
+        center={center}
+        zoom={14}
+        className="w-full h-full rounded-b-xl"
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -113,7 +124,7 @@ function DeliveryBoyTracking({ data }) {
         </Marker>
 
         {routeCoords.length > 0 && (
-          <Polyline positions={routeCoords} color="blue" weight={3} />
+          <Polyline positions={routeCoords} color="#ff4d30" weight={4} />
         )}
       </MapContainer>
     </div>
