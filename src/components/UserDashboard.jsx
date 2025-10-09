@@ -17,7 +17,7 @@ export default function UserDashboard() {
   const [showShopLeftButton, setShowShopLeftButton] = useState(false);
   const [showShopRightButton, setShowShopRightButton] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const { currentCity, shopInMyCity, ItemInMyCity } = useSelector(
+  const { currentCity, shopInMyCity, ItemInMyCity, searchItems } = useSelector(
     (state) => state.user
   );
   const [updatedItemList, setUpdatedItemList] = useState(ItemInMyCity);
@@ -84,9 +84,25 @@ export default function UserDashboard() {
   }, [ItemInMyCity]);
 
   return (
-    <div className="bg-[#fef4ee] min-h-screen">
+    <div className="bg-gradient-to-b from-orange-200 to-white min-h-screen">
       <Navbar />
+
       <div className="flex justify-center flex-col items-center">
+        {/* search items */}
+        {searchItems && searchItems.length > 0 && (
+          <div className="w-full max-w-5xl relative bg-orange-50 rounded-xl border border-gray-200 m-4 pb-6">
+            <h2 className="text-lg font-semibold mb-3 pt-6 px-10">
+              Search Items
+            </h2>
+
+            <div className="flex h-auto items-center justify-center flex-wrap gap-[20px] overflow-x-auto scroll-smooth scrollbar-hide px-10">
+              {searchItems?.map((item, index) => (
+                <FoodCard key={index} data={item} />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* shop categories */}
         <div className="w-full max-w-5xl relative">
           <h2 className="text-lg font-semibold mb-3 pt-6 px-10">

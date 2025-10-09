@@ -34,7 +34,7 @@ function Shop() {
     handleShop();
   }, [shopId]);
   return (
-    <div>
+    <div className="bg-gradient-to-b from-orange-200 to-white">
       <div className="relative">
         <img src={shop?.image} className="w-full max-h-[300px] object-center" />
 

@@ -47,7 +47,6 @@ export default function DeliveryBoyDahsboard() {
         `${SERVER_URL}/api/order/get-current-order`,
         { withCredentials: true }
       );
-      console.log("get current Order ", result?.data?.data);
       setCurrentOrder(result?.data?.data);
     } catch (error) {
       handleApiError(error, "Order failed. Try again.");
@@ -82,11 +81,6 @@ export default function DeliveryBoyDahsboard() {
     if (!otp) return toast.error("Please enter the OTP");
 
     try {
-      console.log("handle verify otp ", {
-        shopOrderId: currentOrder?.shopOrder?._id,
-        orderId: currentOrder?._id,
-        otp,
-      });
       setLoading(true);
       const result = await axios.post(
         `${SERVER_URL}/api/order/verify-delivery-otp`,

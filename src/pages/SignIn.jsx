@@ -73,7 +73,7 @@ function SignIn() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-[#fff7f4]">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-orange-200 to-white">
       <div className="bg-white shadow-md rounded-xl px-8 py-10 w-[380px]">
         <h1 className="text-2xl font-extrabold text-[#ff4d30] mb-1">
           FoodFetch

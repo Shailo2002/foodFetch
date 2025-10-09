@@ -24,7 +24,9 @@ function CheckOut() {
   const [addressInput, setAddressInput] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const { location, address } = useSelector((state) => state.map);
-  const { cartItems, totalAmount } = useSelector((store) => store.user);
+  const { cartItems, totalAmount, userData } = useSelector(
+    (store) => store.user
+  );
   const deliveryFee = totalAmount > 500 ? 0 : 40;
   const amountWithDeliveryFee = totalAmount + deliveryFee;
 
@@ -62,16 +64,13 @@ function CheckOut() {
   };
 
   function getCurrentLocation() {
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
-      dispatch(setLocation({ lat: latitude, long: longitude }));
-    });
+    const latitude = userData?.data?.location?.coordinates[1];
+    const longitude = userData?.data?.location?.coordinates[0];
+    dispatch(setLocation({ lat: latitude, long: longitude }));
   }
 
   const getLatLongByAddress = async () => {
     try {
-
       const result = await axios.get(
         `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
           addressInput

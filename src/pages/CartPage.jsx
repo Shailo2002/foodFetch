@@ -11,14 +11,17 @@ function CartPage() {
   const navigate = useNavigate();
   return (
     <div className="flex justify-center p-6 min-h-screen w-full bg-gradient-to-b from-orange-200 to-white">
-      <div className="w-full max-w-[800px] flex justify-center items-center">
-        <div
-          className="absolute top-[20px] left-[20px] z-[10] mb-[10px] cursor-pointer"
-          onClick={() => {
-            navigate("/");
-          }}
-        >
-          <IoIosArrowRoundBack size={32} className="text-[#ff4d2d]" />
+      <div className="w-full max-w-[800px] ">
+        <div className="flex items-center gap-[20px] mb-6">
+          <div
+            className=" z-[10]"
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            <IoIosArrowRoundBack size={35} className="text-[#ff4d2d]" />
+          </div>
+          <h1 className="font-semibold text-xl text-start"> Cart</h1>{" "}
         </div>
         {cartItems.length == 0 ? (
           <div className="flex flex-col justify-center items-center bg-white border border-gray-300 shadow-md p-6 rounded-xl hover:shadow-2xl">
@@ -55,7 +58,12 @@ function CartPage() {
               <div className="text-[#ff4d2d]">{`₹${totalAmount}`}</div>
             </div>
             <div className="flex justify-end">
-              <Button text={"Check Out"} variant={"primary"} extraStyle="p-2 mt-2" onClick={() => navigate("/checkout")}/>
+              <Button
+                text={"Check Out"}
+                variant={"primary"}
+                extraStyle="p-2 mt-2"
+                onClick={() => navigate("/checkout")}
+              />
             </div>
           </div>
         )}

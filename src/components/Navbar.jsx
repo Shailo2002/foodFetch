@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdOutlineLocationOn } from "react-icons/md";
-import { IoIosSearch } from "react-icons/io";
 import { LuShoppingCart } from "react-icons/lu";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { FaPlus } from "react-icons/fa6";
@@ -12,6 +11,7 @@ import { SERVER_URL } from "../../Contant";
 import { clearUserData, setUserData } from "../redux/userSlice";
 import { setMyShopData } from "../redux/ownerSlice";
 import { useNavigate } from "react-router-dom";
+import SearchBar from "./SearchBar";
 
 export default function Navbar() {
   const { userData, currentCity, cartItems } = useSelector(
@@ -20,6 +20,7 @@ export default function Navbar() {
   const myShopData = useSelector((state) => state.owner.myShopData);
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
+
   const navigate = useNavigate();
 
   const handleLogOut = async () => {
@@ -39,22 +40,6 @@ export default function Navbar() {
   };
 
   const userInitial = userData?.data?.fullName?.charAt(0)?.toUpperCase();
-
-  // Reusable search bar
-  const SearchBar = ({ fullWidth }) => (
-    <div
-      className={`flex items-center bg-white border border-gray-200 rounded-full px-3 py-2 shadow-sm hover:shadow-md transition-all ${
-        fullWidth ? "w-full" : "max-w-xs"
-      }`}
-    >
-      <IoIosSearch size={22} className="text-gray-500" />
-      <input
-        type="text"
-        placeholder="Search food..."
-        className="ml-2 bg-transparent outline-none text-sm w-full"
-      />
-    </div>
-  );
 
   // Reusable logout menu
   const LogoutMenu = () => (
@@ -97,7 +82,9 @@ export default function Navbar() {
           </div>
 
           {/* Search */}
-          {userData.data.role == "user" && <SearchBar />}
+          {userData.data.role == "user" && (
+            <SearchBar currentCity={currentCity} />
+          )}
 
           {/* Cart & Profile */}
           <div className="flex items-center gap-4">
@@ -203,7 +190,7 @@ export default function Navbar() {
 
       {userData.data.role == "user" && (
         <div className="block md:hidden mx-6 my-6">
-          <SearchBar fullWidth />
+          <SearchBar fullWidth currentCity={currentCity} />
         </div>
       )}
     </div>
