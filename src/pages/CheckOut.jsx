@@ -16,7 +16,7 @@ import { Button } from "../ui/Button";
 import { SERVER_URL } from "../../Contant";
 import { toast } from "react-toastify";
 import { handleApiError } from "../utils/handleApiError";
-import { AddMyOrder } from "../redux/userSlice";
+import { AddMyOrder, clearCart } from "../redux/userSlice";
 
 function CheckOut() {
   const navigate = useNavigate();
@@ -107,17 +107,59 @@ function CheckOut() {
         { withCredentials: true }
       );
 
-      if (result.data?.success) {
-        toast.success(result.data.message || "Order placed successful!");
-        // dispatch(cartItems([]));
-        dispatch(AddMyOrder(result?.data?.data));
-        navigate("/order-placed");
+      if (paymentMethod == "cod") {
+        if (result.data?.success) {
+          toast.success(result.data.message || "Order placed successful!");
+          dispatch(AddMyOrder(result?.data?.data));
+          dispatch(clearCart());
+          navigate("/order-placed");
+        } else {
+          toast.error(result.data?.message || "Order failed");
+        }
       } else {
-        toast.error(result.data?.message || "Order failed");
+        const orderId = result?.data?.data?.orderId;
+        const razorOrder = result?.data?.data?.razorpayOrder;
+        dispatch(clearCart());
+
+        openRazorPayWindow(orderId, razorOrder);
       }
     } catch (error) {
       handleApiError(error, "Order failed. Try again.");
     }
+  };
+
+  const openRazorPayWindow = (orderId, razorOrder) => {
+    const key = import.meta.env.RAZORPAY_KEY_ID;
+
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: razorOrder.amount,
+      currency: "INR",
+      name: "FoodFetch",
+      description: `Payment for FoodFetch Order #${orderId}`,
+      image:
+        "https://res.cloudinary.com/dvqlugfca/image/upload/v1760009541/ChatGPT_Image_Oct_9_2025_05_01_50_PM_rfpapj.png",
+      order_id: razorOrder.id,
+      handler: async function (response) {
+        try {
+          const result = await axios.post(
+            `${SERVER_URL}/api/order/verify-payment`,
+            { razorpay_payment_id: response.razorpay_payment_id, orderId },
+            { withCredentials: true }
+          );
+          toast.success(result?.data?.message || "Order placed successful!");
+          console.log("razorpay result : ", result);
+          dispatch(AddMyOrder(result?.data?.data));
+          navigate("/order-placed");
+        } catch (error) {
+          handleApiError(error);
+        }
+      },
+    };
+    console.log("razor pay order check 3 ");
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   };
 
   return (
@@ -191,7 +233,7 @@ function CheckOut() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
             <div
-              className={`flex items-center gap-3 rounded-xl border p-2 text-left transition ${
+              className={`flex items-center gap-3 rounded-xl border p-2 text-left transition cursor-pointer ${
                 paymentMethod === "cod"
                   ? "border-[#ff4d2d] bg-orange-50 shadow"
                   : "border-gray-200 hover:border-gray-400"
@@ -210,7 +252,7 @@ function CheckOut() {
             </div>
 
             <div
-              className={`flex items-center gap-3 rounded-xl border p-2 text-left transition ${
+              className={`flex items-center gap-3 rounded-xl border p-2 text-left transition cursor-pointer ${
                 paymentMethod === "online"
                   ? "border-[#ff4d2d] bg-orange-50 shadow"
                   : "border-gray-200 hover:border-gray-400"

@@ -59,13 +59,42 @@ function OwnerOrderCard({ data }) {
             {data?.user?.mobile}
           </div>
         </div>
-        <div
-          className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
-            statusColors[data?.shopOrders?.status] ||
-            "bg-gray-100 text-gray-700"
-          }`}
-        >
-          {data?.shopOrders?.status}
+
+        <div className="flex flex-col items-end gap-2">
+          {/* Order Status */}
+          <div
+            className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
+              statusColors[data?.shopOrders?.status] ||
+              "bg-gray-100 text-gray-700"
+            }`}
+          >
+            {data?.shopOrders?.status}
+          </div>
+
+          {/* Payment Info */}
+          <div className="flex flex-col items-end gap-1">
+            <div
+              className={`flex items-center pl-3 gap-1 text-xs font-semibold rounded-full capitalize bg-gray-100 text-gray-700 ${
+                data?.paymentMethod !== "online" ? "py-1 p-3" : ""
+              }`}
+            >
+              {data?.paymentMethod === "online"
+                ? "Online Payment"
+                : "Cash on Delivery"}
+
+              {data?.paymentMethod === "online" && (
+                <div
+                  className={`px-2 py-1 text-xs font-semibold rounded-r-full ${
+                    data?.payment
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {data?.payment ? "Payment Successful" : "Payment Failed"}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -132,7 +161,9 @@ function OwnerOrderCard({ data }) {
       {data?.shopOrders?.status === "out_for_delivery" && (
         <div className="bg-orange-50 rounded-lg p-3 mt-4 mb-4">
           <h3 className="text-orange-700 font-semibold mb-2">
-            {data.shopOrders.assignedDeliveryBoy ? "Assigned Delivery Boys" :"Available Delivery Boys"} 
+            {data.shopOrders.assignedDeliveryBoy
+              ? "Assigned Delivery Boys"
+              : "Available Delivery Boys"}
           </h3>
           {availableBoys.length > 0 ? (
             <div className="space-y-2">

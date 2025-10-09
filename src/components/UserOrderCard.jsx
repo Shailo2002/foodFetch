@@ -4,7 +4,7 @@ import { MdOutlineAccessTime } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 function UserOrderCard({ data }) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString("en-GB", {
@@ -37,13 +37,32 @@ function UserOrderCard({ data }) {
             {formatDate(data?.createdAt)}
           </p>
         </div>
-        <div className="text-right">
-          <p className="text-sm text-gray-500 uppercase">
-            {data?.paymentMethod}
-          </p>
+
+        {/* payment status */}
+        <div className="flex flex-col items-end gap-1">
+          <div
+            className={`flex items-center pl-3 gap-1 text-xs font-semibold rounded-full capitalize bg-gray-100 text-gray-700 ${
+              data?.paymentMethod !== "online" ? "py-2 p-3" : ""
+            }`}
+          >
+            {data?.paymentMethod === "online"
+              ? "Online Payment"
+              : "Cash on Delivery"}
+
+            {data?.paymentMethod === "online" && (
+              <div
+                className={`px-2 py-2 text-xs font-semibold rounded-r-full ${
+                  data?.payment
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
+                }`}
+              >
+                {data?.payment ? "Payment Successful" : "Payment Failed"}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
       {/* Shop Orders */}
       {data?.shopOrders?.map((shopOrder, shopIndex) => (
         <div
@@ -97,7 +116,6 @@ function UserOrderCard({ data }) {
           </div>
         </div>
       ))}
-
       {/* Total + Track */}
       <div className="flex justify-between items-center border-t pt-3">
         <div className="font-semibold text-gray-900 text-base">

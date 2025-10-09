@@ -73,6 +73,9 @@ export const userSlice = createSlice({
         0
       );
     },
+    clearCart: (state) => {
+      state.cartItems = [];
+    },
     setMyOrders: (state, action) => {
       state.myOrders = action.payload;
     },
@@ -122,6 +125,7 @@ export const {
   AddMyOrder,
   updateOrderStatus,
   setSearchItems,
+  clearCart,
 } = userSlice.actions;
 
 export default userSlice.reducer;
