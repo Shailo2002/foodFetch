@@ -3,7 +3,7 @@ import SignIn from "./pages/SignIn";
 import ForgotPassword from "./pages/ForgotPassword";
 import { ToastContainer } from "react-toastify";
 import useGetCurrentUser from "./hooks/useGetCurrentUser";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Home from "./pages/Home";
 import useGetCity from "./hooks/useGetCity";
 import useGetMyShop from "./hooks/useGetMyShop";
@@ -21,8 +21,15 @@ import useGetMyOrders from "./hooks/useGetMyOrders";
 import useUpdateLocation from "./hooks/useUpdateLocation";
 import TrackOrder from "./pages/TrackOrder";
 import Shop from "./pages/Shop";
+import { useEffect } from "react";
+import { io } from "socket.io-client";
+import { SERVER_URL } from "../Contant";
+import { setSocket } from "./redux/userSlice";
 
 function App() {
+  const dispatch = useDispatch();
+  const { userData, loading } = useSelector((state) => state.user);
+
   useGetCurrentUser();
   useGetMyShop();
   useGetCity();
@@ -30,7 +37,19 @@ function App() {
   useGetItemByCity();
   useGetMyOrders();
   useUpdateLocation();
-  const { userData, loading } = useSelector((state) => state.user);
+  useEffect(() => {
+    const socketInstance = io(SERVER_URL, { withCredentials: true });
+    console.log("socketInstance ", socketInstance)
+    dispatch(setSocket(socketInstance));
+    socketInstance.on("connect", () => {
+      if(userData){
+        socketInstance.emit('identity',{userId: userData?.data?._id})
+      }
+    });
+    return () => {
+      socketInstance.disconnect()
+    }
+  }, [userData?.data?._id]);
 
   if (loading) {
     return (

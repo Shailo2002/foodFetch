@@ -14,6 +14,7 @@ export const userSlice = createSlice({
     totalAmount: 0,
     myOrders: [],
     searchItems: null,
+    socket: null,
   },
   reducers: {
     setUserData: (state, action) => {
@@ -94,6 +95,9 @@ export const userSlice = createSlice({
     setSearchItems: (state, action) => {
       state.searchItems = action.payload;
     },
+    setSocket: (state, action) => {
+      state.socket = action.payload;
+    },
     clearUserData: (state) => {
       state.userData = null;
       state.currentCity = null;
@@ -125,6 +129,7 @@ export const {
   AddMyOrder,
   updateOrderStatus,
   setSearchItems,
+  setSocket,
   clearCart,
 } = userSlice.actions;
 
