@@ -19,7 +19,7 @@ function MyOrders() {
       }
     });
     socket?.on("orderStatus", ({ userId, orderId, shopId, status }) => {
-      if (userId == userData?.data?._id && userData?.data?.role == "user") {
+      if (userId == userData?.data?._id) {
         dispatch(
           updateOrderStatus({
             orderId,

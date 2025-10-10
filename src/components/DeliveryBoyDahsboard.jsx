@@ -10,7 +10,7 @@ import { Input } from "../ui/Input";
 import { toast } from "react-toastify";
 
 export default function DeliveryBoyDahsboard() {
-  const { userData } = useSelector((state) => state.user);
+  const { userData, socket } = useSelector((state) => state.user);
   const [availableAssignments, setAvailableAssignments] = useState(null);
   const [currentOrder, setCurrentOrder] = useState(null);
   const [showOtpBox, setShowOtpBox] = useState(false);
@@ -28,6 +28,8 @@ export default function DeliveryBoyDahsboard() {
       handleApiError(error, "Order failed. Try again.");
     }
   };
+
+  console.log(availableAssignments);
 
   const acceptOrder = async (assignmentId) => {
     try {
@@ -49,7 +51,8 @@ export default function DeliveryBoyDahsboard() {
       );
       setCurrentOrder(result?.data?.data);
     } catch (error) {
-      handleApiError(error, "Order failed. Try again.");
+      // handleApiError(error, "Order failed. Try again.");
+      console.log("error :", error);
     }
   };
 
@@ -108,6 +111,19 @@ export default function DeliveryBoyDahsboard() {
     handleGetAssignments();
     getCurrentOrder();
   }, [userData]);
+
+  useEffect(() => {
+    const handleNewAssignment = (data) => {
+      setAvailableAssignments((prev) => {
+        if (prev.some((item) => item.assignmentId === data.assignmentId))
+          return prev;
+        return [data, ...prev];
+      });
+    };
+
+    socket.on("newAssignment", handleNewAssignment);
+    return () => socket.off("newAssignment", handleNewAssignment);
+  }, [socket]);
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-orange-50">
@@ -227,7 +243,10 @@ export default function DeliveryBoyDahsboard() {
                   extraStyle="px-2 w-full"
                   onClick={() => handleVerifyOtp()}
                 />
-                <div className="block text-sm font-medium mb-1 hover:text-blue-600 text-decoration-line: underline cursor-pointer" onClick={() => handleSendOtp()}>
+                <div
+                  className="block text-sm font-medium mb-1 hover:text-blue-600 text-decoration-line: underline cursor-pointer"
+                  onClick={() => handleSendOtp()}
+                >
                   Resend Otp
                 </div>
               </div>
