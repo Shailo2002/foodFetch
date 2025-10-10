@@ -85,11 +85,31 @@ export const userSlice = createSlice({
     },
     updateOrderStatus: (state, action) => {
       const { orderId, shopId, status } = action.payload;
-      const order = state.myOrders.find((o) => o._id == orderId);
-      if (order) {
-        if (order.shopOrders && order.shopOrders.shop._id == shopId) {
-          order.shopOrders.status = status;
+      const order = state.myOrders.find((o) => o._id === orderId);
+
+      if (!order) {
+        console.warn("Order not found for orderId:", orderId);
+        return;
+      }
+
+      // Case 1: shopOrders is an array (user)
+      if (Array.isArray(order.shopOrders)) {
+        const shopOrder = order.shopOrders.find((s) => s.shop._id === shopId);
+        if (shopOrder) {
+          console.log("User Before:", shopOrder.status);
+          shopOrder.status = status;
+          console.log("User After:", shopOrder.status);
+        } else {
+          console.warn("ShopOrder not found for user with shopId:", shopId);
         }
+
+        // Case 2: shopOrders is a single object (owner)
+      } else if (order.shopOrders && order.shopOrders.shop?._id === shopId) {
+        console.log("Owner Before:", order.shopOrders.status);
+        order.shopOrders.status = status;
+        console.log("Owner After:", order.shopOrders.status);
+      } else {
+        console.warn("shopOrders format not recognized for orderId:", orderId);
       }
     },
     setSearchItems: (state, action) => {

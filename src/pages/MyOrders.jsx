@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import UserOrderCard from "../components/UserOrderCard";
 import OwnerOrderCard from "../components/OwnerOrderCard";
-import { AddMyOrder } from "../redux/userSlice";
+import { AddMyOrder, updateOrderStatus } from "../redux/userSlice";
 
 function MyOrders() {
   const navigate = useNavigate();
@@ -18,9 +18,21 @@ function MyOrders() {
         dispatch(AddMyOrder(data));
       }
     });
+    socket?.on("orderStatus", ({ userId, orderId, shopId, status }) => {
+      if (userId == userData?.data?._id && userData?.data?.role == "user") {
+        dispatch(
+          updateOrderStatus({
+            orderId,
+            shopId,
+            status,
+          })
+        );
+      }
+    });
 
     return () => {
       socket?.off("newOrder");
+      socket?.off("orderStatus");
     };
   }, [socket]);
 

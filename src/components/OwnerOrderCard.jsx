@@ -27,8 +27,13 @@ function OwnerOrderCard({ data }) {
         { withCredentials: true }
       );
       setAvailableBoys(result?.data?.data?.availableBoys);
+      console.log("in owner order card ",{
+        orderId,
+        shopId,
+        status,
+      }, result?.data?.success);
 
-      if (result.data?.success) {
+      if (result?.data?.success) {
         dispatch(
           updateOrderStatus({
             orderId,
@@ -36,7 +41,7 @@ function OwnerOrderCard({ data }) {
             status,
           })
         );
-        toast.success(result.data.message || "Order status updated!");
+        toast.success(result?.data?.message || "Order status updated!");
       } else {
         toast.error(result.data?.message || "Order update failed");
       }
