@@ -29,8 +29,6 @@ export default function DeliveryBoyDahsboard() {
     }
   };
 
-  console.log(availableAssignments);
-
   const acceptOrder = async (assignmentId) => {
     try {
       const result = await axios.get(
@@ -106,6 +104,30 @@ export default function DeliveryBoyDahsboard() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!socket || userData?.role !== "delivery_boy") return;
+    let watchId;
+    if (navigator?.geolocation) {
+      watchId = navigator?.geolocation?.watchPosition((pos) => {
+        const latitude = pos?.coords?.latitude;
+        const longitude = pos?.coords?.longitude;
+        socket.emit("updateLocation", {
+          latitude,
+          longitude,
+          userId: userData?.data?._id,
+        });
+      });
+      (error) => {
+        console.log(error);
+      },
+        { enableHighAccuracy: true };
+    }
+
+    return () => {
+      if (watchId) navigator?.geolocation?.clearWatch(watchId);
+    };
+  }, [socket, userData]);
 
   useEffect(() => {
     handleGetAssignments();
