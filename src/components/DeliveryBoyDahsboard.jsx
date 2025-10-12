@@ -15,6 +15,7 @@ export default function DeliveryBoyDahsboard() {
   const [currentOrder, setCurrentOrder] = useState(null);
   const [showOtpBox, setShowOtpBox] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [location, setLocation] = useState({});
   const [otp, setOtp] = useState("");
 
   const handleGetAssignments = async () => {
@@ -106,26 +107,39 @@ export default function DeliveryBoyDahsboard() {
   };
 
   useEffect(() => {
-    if (!socket || userData?.role !== "delivery_boy") return;
+    if (!socket || userData?.data?.role !== "delivery_boy") return;
     let watchId;
+
     if (navigator?.geolocation) {
-      watchId = navigator?.geolocation?.watchPosition((pos) => {
-        const latitude = pos?.coords?.latitude;
-        const longitude = pos?.coords?.longitude;
-        socket.emit("updateLocation", {
-          latitude,
-          longitude,
-          userId: userData?.data?._id,
-        });
-      });
-      (error) => {
-        console.log(error);
-      },
-        { enableHighAccuracy: true };
+      watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          const latitude = pos.coords.latitude;
+          const longitude = pos.coords.longitude;
+
+          setLocation({ lat: latitude, lon: longitude });
+          console.log("updateLocation", {
+            latitude,
+            longitude,
+            userId: userData?.data?._id,
+          });
+
+          socket.emit("updateLocation", {
+            latitude,
+            longitude,
+            userId: userData?.data?._id,
+          });
+        },
+        (error) => {
+          console.log("Geolocation error:", error);
+        },
+        { enableHighAccuracy: true }
+      );
+    } else {
+      console.log("Geolocation not supported in this browser");
     }
 
     return () => {
-      if (watchId) navigator?.geolocation?.clearWatch(watchId);
+      if (watchId) navigator.geolocation.clearWatch(watchId);
     };
   }, [socket, userData]);
 
@@ -147,6 +161,9 @@ export default function DeliveryBoyDahsboard() {
     return () => socket.off("newAssignment", handleNewAssignment);
   }, [socket]);
 
+  console.log("currentOrder : ", currentOrder);
+  console.log("location : ", location);
+
   return (
     <div className="min-h-screen w-full flex flex-col bg-orange-50">
       <Navbar />
@@ -161,11 +178,11 @@ export default function DeliveryBoyDahsboard() {
             <div className="text-sm ">
               <span className="font-semibold">Latitude: </span>
               <span className="text-xs">
-                {userData?.data?.location?.coordinates[0]},
+                {location?.lat || userData?.data?.location?.coordinates[1]},
               </span>
               <span className="font-semibold"> Longitude: </span>
               <span className="text-xs">
-                {userData?.data?.location?.coordinates[1]}
+                {location?.lon || userData?.data?.location?.coordinates[0]}
               </span>
             </div>
           </div>
@@ -231,7 +248,18 @@ export default function DeliveryBoyDahsboard() {
                 {currentOrder?.shopOrder?.subTotal}
               </p>
             </div>
-            <DeliveryBoyTracking data={currentOrder} />
+            <DeliveryBoyTracking
+              data={{
+                curstomerLocation: {
+                  lat: currentOrder?.curstomerLocation?.lat,
+                  lon: currentOrder?.curstomerLocation?.lon,
+                },
+                deliveryBoyLocation: location || {
+                  lat: currentOrder?.deliveryBoyLocation?.lat,
+                  lon: currentOrder?.deliveryBoyLocation?.lon,
+                },
+              }}
+            />
 
             {!showOtpBox && (
               <Button

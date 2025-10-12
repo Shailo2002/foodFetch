@@ -5,10 +5,13 @@ import axios from "axios";
 import { SERVER_URL } from "../../Contant";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import DeliveryBoyTracking from "../components/DeliveryBoyTracking";
+import { useSelector } from "react-redux";
 
 function TrackOrder() {
   const { orderId } = useParams();
+  const { socket } = useSelector((state) => state.user);
   const [currentOrder, setCurrentOrder] = useState();
+  const [liveLocation, setLiveLocation] = useState({});
   const navigate = useNavigate();
 
   const statusColors = {
@@ -31,8 +34,17 @@ function TrackOrder() {
   };
 
   useEffect(() => {
+    socket.on("updateBoyLocation", ({ deliveryBoyId, latitude, longitude }) => {
+      setLiveLocation((prev) => ({
+        ...prev,
+        [deliveryBoyId]: { lat: latitude, lon: longitude },
+      }));
+    });
+  }, [socket]);
+
+  useEffect(() => {
     handleGetOrder();
-  }, [orderId]);
+  }, [socket]);
 
   return (
     <div className="flex justify-center min-h-screen bg-gradient-to-b from-orange-200 to-white">
@@ -109,7 +121,9 @@ function TrackOrder() {
                           lat: currentOrder?.deliveryAddress?.latitude,
                           lon: currentOrder?.deliveryAddress?.longitude,
                         },
-                        deliveryBoyLocation: {
+                        deliveryBoyLocation: liveLocation[
+                          shopOrder?.assignedDeliveryBoy?._id
+                        ] || {
                           lat: shopOrder?.assignedDeliveryBoy?.location
                             ?.coordinates[1],
                           lon: shopOrder?.assignedDeliveryBoy?.location
