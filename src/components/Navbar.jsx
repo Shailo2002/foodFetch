@@ -14,12 +14,13 @@ import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 
 export default function Navbar() {
-  const { userData, currentCity, cartItems } = useSelector(
+  const { userData, currentCity, cartItems, myOrders } = useSelector(
     (state) => state.user
   );
   const myShopData = useSelector((state) => state.owner.myShopData);
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pendingOrder, setPendingOrder] = useState(0)
 
   const navigate = useNavigate();
 
@@ -62,6 +63,15 @@ export default function Navbar() {
     </div>
   );
 
+  useEffect(() => {
+    let tempData = 0 ;
+   myOrders.forEach(order => {
+      if (order?.shopOrders?.status !== "delivered") {
+        tempData += 1;
+      }
+    });
+    setPendingOrder(tempData)
+  }, [myOrders])
   return (
     <div>
       <nav className="bg-[#fff9f6] shadow-[0_4px_12px_rgba(255,77,48,0.15)] border-b border-[#ffe3db] px-4 sm:px-6 py-3 flex justify-between items-center relative">
@@ -106,7 +116,7 @@ export default function Navbar() {
                 >
                   Pending Order
                   <span className="absolute -top-1 -right-1 bg-[#ff4d30] text-white text-xs font-semibold w-5 h-5 flex items-center justify-center rounded-full">
-                    0
+                    {pendingOrder}
                   </span>
                 </button>
               </div>

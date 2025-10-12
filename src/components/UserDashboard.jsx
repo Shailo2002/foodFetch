@@ -95,7 +95,7 @@ export default function UserDashboard() {
               Search Items
             </h2>
 
-            <div className="flex h-auto items-center justify-center flex-wrap gap-[20px] overflow-x-auto scroll-smooth scrollbar-hide px-10">
+            <div className="flex h-auto items-center justify-center flex-wrap gap-[20px] overflow-x-auto scroll-smooth scrollbar-hide mx-2">
               {searchItems?.map((item, index) => (
                 <FoodCard key={index} data={item} />
               ))}

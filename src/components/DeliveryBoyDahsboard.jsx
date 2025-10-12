@@ -8,6 +8,8 @@ import { Button } from "../ui/Button";
 import DeliveryBoyTracking from "./DeliveryBoyTracking";
 import { Input } from "../ui/Input";
 import { toast } from "react-toastify";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { useNavigate } from "react-router-dom";
 
 export default function DeliveryBoyDahsboard() {
   const { userData, socket } = useSelector((state) => state.user);
@@ -16,7 +18,10 @@ export default function DeliveryBoyDahsboard() {
   const [showOtpBox, setShowOtpBox] = useState(false);
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState({});
+  const [todayDeliveries, setTodayDeliveries] = useState([]);
+  const [todayTotalEarning, setTodayTotalEarning] = useState(0);
   const [otp, setOtp] = useState("");
+  const navigate = useNavigate();
 
   const handleGetAssignments = async () => {
     try {
@@ -96,6 +101,7 @@ export default function DeliveryBoyDahsboard() {
 
       if (result.data?.success) {
         toast.success(result.data.message || "OTP verified successfully");
+        navigate(0);
       } else {
         toast.error(result.data?.message || "OTP verification failed");
       }
@@ -106,6 +112,20 @@ export default function DeliveryBoyDahsboard() {
     }
   };
 
+  const handleTodayDeliveries = async () => {
+    try {
+      const result = await axios.get(
+        `${SERVER_URL}/api/order/get-today-deliveries`,
+        { withCredentials: true }
+      );
+
+      console.log("today Delivery Data : ", result?.data?.data);
+      setTodayDeliveries(result?.data?.data);
+      toast.success(result.data.message || "OTP verified successfully");
+    } catch (error) {
+      handleApiError(error, "OTP verification failed");
+    }
+  };
   useEffect(() => {
     if (!socket || userData?.data?.role !== "delivery_boy") return;
     let watchId;
@@ -117,11 +137,6 @@ export default function DeliveryBoyDahsboard() {
           const longitude = pos.coords.longitude;
 
           setLocation({ lat: latitude, lon: longitude });
-          console.log("updateLocation", {
-            latitude,
-            longitude,
-            userId: userData?.data?._id,
-          });
 
           socket.emit("updateLocation", {
             latitude,
@@ -146,6 +161,7 @@ export default function DeliveryBoyDahsboard() {
   useEffect(() => {
     handleGetAssignments();
     getCurrentOrder();
+    handleTodayDeliveries();
   }, [userData]);
 
   useEffect(() => {
@@ -161,8 +177,14 @@ export default function DeliveryBoyDahsboard() {
     return () => socket.off("newAssignment", handleNewAssignment);
   }, [socket]);
 
-  console.log("currentOrder : ", currentOrder);
-  console.log("location : ", location);
+  useEffect(() => {
+    const ratePerDelivery = 50;
+    const todayEarning = todayDeliveries.reduce(
+      (sum, d) => sum + d?.count * ratePerDelivery,
+      0
+    );
+    setTodayTotalEarning(todayEarning);
+  }, [todayDeliveries]);
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-orange-50">
@@ -183,6 +205,30 @@ export default function DeliveryBoyDahsboard() {
               <span className="font-semibold"> Longitude: </span>
               <span className="text-xs">
                 {location?.lon || userData?.data?.location?.coordinates[0]}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* analytics part */}
+        <div className="bg-white rounded-lg p-3 mt-4 mb-4 shadow w-full max-w-[800px]">
+          <h3 className="text-[#ff4d30] font-semibold mb-2 ">Today's Order</h3>
+          <BarChart width={600} height={300} data={todayDeliveries}>
+            <XAxis dataKey="hour" tickFormatter={(h) => `${h}:00`} />
+            <YAxis allowDecimals={false} />
+            <Tooltip
+              formatter={(value) => [value, "orders"]}
+              labelFormatter={(label) => `${label} :00`}
+            />
+            <CartesianGrid strokeDasharray="4 4" />
+            <Bar dataKey="count" fill="#ff4d30" barSize={50} />
+          </BarChart>
+
+          <div className="flex justify-center items-center w-full">
+            <div className="bg-gray-50 rounded-lg p-3 mt-4 mb-4 shadow-xl border-gray-50 w-full max-w-[300px] text-center">
+              <h3 className=" text-xl font-semibold mb-2 ">Today's Earning</h3>
+              <span className="text-green-500 font-bold text-2xl">
+                ₹{todayTotalEarning}
               </span>
             </div>
           </div>

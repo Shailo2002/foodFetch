@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "../ui/Button";
 import { MdOutlineAccessTime } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { SERVER_URL } from "../../Contant";
 
 function UserOrderCard({ data }) {
   const navigate = useNavigate();
+  const [selectedRating, setSelectedRating] = useState({});
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString("en-GB", {
@@ -22,6 +25,22 @@ function UserOrderCard({ data }) {
     preparing: "bg-blue-100 text-blue-700",
     out_for_delivery: "bg-purple-100 text-purple-700",
     delivered: "bg-green-100 text-green-700",
+  };
+
+  const handleRating = async (rating, itemId) => {
+    try {
+      const result = await axios.post(
+        `${SERVER_URL}/api/item/rating`,
+        { rating, itemId },
+        { withCredentials: true }
+      );
+      setSelectedRating((prev) => ({
+        ...prev,
+        [itemId]: rating,
+      }));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -86,24 +105,34 @@ function UserOrderCard({ data }) {
           {/* Items */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {shopOrder?.shopOrderItems?.map((item, itemIndex) => (
-              <div
-                key={itemIndex}
-                className="rounded-xl overflow-hidden border border-gray-100 bg-white shadow-sm hover:shadow-md transition-all duration-300"
-              >
-                <img
-                  src={item?.item?.image}
-                  alt={item?.item?.name}
-                  className="w-full h-28 object-cover"
-                />
-                <div className="p-2">
-                  <h4 className="font-medium text-sm text-gray-900 truncate">
-                    {item?.item?.name}
-                  </h4>
-                  <div className="text-xs text-gray-600 mt-1 flex justify-between">
-                    <span>Qty: {item?.quantity}</span>
-                    <span>₹{item?.price}</span>
+              <div>
+                {" "}
+                <div
+                  key={itemIndex}
+                  className="rounded-xl overflow-hidden border border-gray-100 bg-white shadow-sm hover:shadow-md transition-all duration-300"
+                >
+                  <img
+                    src={item?.item?.image}
+                    alt={item?.item?.name}
+                    className="w-full h-28 object-cover"
+                  />
+                  <div className="p-2">
+                    <h4 className="font-medium text-sm text-gray-900 truncate">
+                      {item?.item?.name}
+                    </h4>
+                    <div className="text-xs text-gray-600 mt-1 flex justify-between">
+                      <span>Qty: {item?.quantity}</span>
+                      <span>₹{item?.price}</span>
+                    </div>
                   </div>
                 </div>
+                {shopOrder?.status === "delivered" && (
+                  <div className="flex gap-1 text-lg justify-center mt-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button className={`${selectedRating[item?.item._id] >= star ? "text-yellow-400":"text-gray-400"}`} onClick={() => handleRating(star, item?.item?._id)}>★</button>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
