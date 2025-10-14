@@ -90,7 +90,7 @@ export default function OwnerDashboard() {
             </div>
           )}
           {myShopData?.items?.length > 0 && (
-            <div className="flex flex-col justify-center items-center">
+            <div className="flex flex-col justify-center items-center mx-4">
               {myShopData?.items?.map((item) => (
                 <OwnerItemCard props={item} key={item._id} />
               ))}

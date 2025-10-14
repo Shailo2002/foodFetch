@@ -7,7 +7,7 @@ import { Input } from "../ui/Input";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setMyShopData } from "../redux/ownerSlice";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
 import { SERVER_URL } from "../../Contant";
 

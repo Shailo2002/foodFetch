@@ -3,7 +3,10 @@ import { FaCheckCircle } from "react-icons/fa";
 import { Button } from "../ui/Button";
 import { useNavigate } from "react-router-dom";
 
+
+
 function OrderPlaced() {
+
     const navigate = useNavigate()
   return (
     <div className="flex justify-center p-6 min-h-screen w-full bg-gradient-to-b from-orange-200 to-white">
@@ -17,7 +20,7 @@ function OrderPlaced() {
             <FaCheckCircle className="size-16 text-green-500" />
           </div>
 
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <h2 className="text-center text-2xl font-bold text-gray-800 mb-2">
             Order Placed Successfully!
           </h2>
           <p className="text-gray-600 mb-8 leading-relaxed max-w-[400px] mx-auto text-center">

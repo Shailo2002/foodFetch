@@ -7,13 +7,13 @@ import { SERVER_URL } from "../../Contant";
 import { Button } from "../ui/Button";
 import DeliveryBoyTracking from "./DeliveryBoyTracking";
 import { Input } from "../ui/Input";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketProvider";
 
 export default function DeliveryBoyDahsboard() {
-  const socket = useSocket()
+  const socket = useSocket();
   const { userData } = useSelector((state) => state.user);
   const [availableAssignments, setAvailableAssignments] = useState(null);
   const [currentOrder, setCurrentOrder] = useState(null);
@@ -175,8 +175,8 @@ export default function DeliveryBoyDahsboard() {
       });
     };
 
-    socket.on("newAssignment", handleNewAssignment);
-    return () => socket.off("newAssignment", handleNewAssignment);
+    socket?.on("newAssignment", handleNewAssignment);
+    return () => socket?.off("newAssignment", handleNewAssignment);
   }, [socket]);
 
   useEffect(() => {

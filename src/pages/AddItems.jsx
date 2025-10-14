@@ -7,7 +7,7 @@ import { Input } from "../ui/Input";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setMyShopData } from "../redux/ownerSlice";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
 import { SERVER_URL } from "../../Contant";
 
@@ -95,14 +95,14 @@ export default function AddItems() {
             <div className="font-extrabold text-2xl p-2">Add Food</div>
             <Input
               label="Name"
-              placeholder="Enter your Shop Name"
+              placeholder="Enter your Item Name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
             <Input
-              label="Shop Image"
-              placeholder="Enter your Shop Name"
+              label="Item Image"
+              placeholder="Enter your Item Image"
               type="file"
               accept="image/*"
               onChange={handleImage}

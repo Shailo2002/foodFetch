@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { IoLocationSharp, IoSearchOutline } from "react-icons/io5";
 import { TbCurrentLocation } from "react-icons/tb";
 import { MdDeliveryDining } from "react-icons/md";
+import { IoClose } from "react-icons/io5";
 import { FaMobileAlt } from "react-icons/fa";
 import { FaCreditCard } from "react-icons/fa6";
 import { Input } from "../ui/Input";
@@ -14,7 +15,7 @@ import { setAddress, setLocation } from "../redux/mapSlice";
 import axios from "axios";
 import { Button } from "../ui/Button";
 import { SERVER_URL } from "../../Contant";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
 import { AddMyOrder, clearCart } from "../redux/userSlice";
 
@@ -23,6 +24,7 @@ function CheckOut() {
   const dispatch = useDispatch();
   const [addressInput, setAddressInput] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [loading, setLoading] = useState(false);
   const { location, address } = useSelector((state) => state.map);
   const { cartItems, totalAmount, userData } = useSelector(
     (store) => store.user
@@ -31,6 +33,13 @@ function CheckOut() {
   const amountWithDeliveryFee = totalAmount + deliveryFee;
 
   const apikey = import.meta.env.VITE_GEOAPIKEY;
+
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      navigate("/", { replace: true });
+    }
+  }, [cartItems, navigate]);
+
 
   function RecenterMap({ location }) {
     const map = useMap();
@@ -93,6 +102,7 @@ function CheckOut() {
 
   const handlePlaceOrder = async () => {
     try {
+      setLoading(true);
       const result = await axios.post(
         `${SERVER_URL}/api/order/place-order`,
         {
@@ -119,18 +129,16 @@ function CheckOut() {
       } else {
         const orderId = result?.data?.data?.orderId;
         const razorOrder = result?.data?.data?.razorpayOrder;
-        dispatch(clearCart());
-
         openRazorPayWindow(orderId, razorOrder);
       }
     } catch (error) {
       handleApiError(error, "Order failed. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const openRazorPayWindow = (orderId, razorOrder) => {
-    const key = import.meta.env.RAZORPAY_KEY_ID;
-
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: razorOrder.amount,
@@ -142,6 +150,7 @@ function CheckOut() {
       order_id: razorOrder.id,
       handler: async function (response) {
         try {
+          setLoading(true);
           const result = await axios.post(
             `${SERVER_URL}/api/order/verify-payment`,
             { razorpay_payment_id: response.razorpay_payment_id, orderId },
@@ -150,9 +159,12 @@ function CheckOut() {
           toast.success(result?.data?.message || "Order placed successful!");
           console.log("razorpay result : ", result);
           dispatch(AddMyOrder(result?.data?.data));
+          dispatch(clearCart());
           navigate("/order-placed");
         } catch (error) {
           handleApiError(error);
+        } finally {
+          setLoading(false);
         }
       },
     };
@@ -165,14 +177,24 @@ function CheckOut() {
   return (
     <div className="flex justify-center items-center p-6 min-h-screen w-full bg-gradient-to-b from-orange-200 to-white">
       <div
-        className="absolute top-[20px] left-[20px] z-[10] mb-[10px] cursor-pointer"
+        className="hidden lg:block absolute top-[20px] left-[20px] z-[10] mb-[10px] cursor-pointer bg-black/70 hover:bg-gray-600 rounded"
         onClick={() => {
           navigate("/cart");
         }}
       >
-        <IoIosArrowRoundBack size={32} className="text-[#ff4d2d]" />
+        <IoIosArrowRoundBack size={32} className="text-[#ff4d30]" />
       </div>
-      <div className="w-full max-w-[900px] bg-white shadow-xl rounded-2xl p-6 space-y-6">
+
+      <div className="relative w-full max-w-[900px] bg-white shadow-xl rounded-2xl p-6 space-y-6">
+        <div
+          className="block lg:hidden absolute top-[20px] right-[20px] z-[10] mb-[10px] cursor-pointer  rounded p-0.5 bg-black/70 hover:bg-gray-600 "
+          onClick={() => {
+            navigate("/cart");
+          }}
+        >
+          <IoClose size={24} className="text-[#ff4d30]" />
+        </div>
+
         <h1 className="text-xl font-bold text-gray-800">Checkout</h1>
 
         <section>
@@ -327,6 +349,7 @@ function CheckOut() {
             type="text"
             extraStyle="w-full mt-4 rounded-xl"
             onClick={() => handlePlaceOrder()}
+            loading={loading}
           />
         </section>
       </div>

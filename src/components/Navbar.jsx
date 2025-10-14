@@ -4,7 +4,7 @@ import { LuShoppingCart } from "react-icons/lu";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import { FaPlus } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import axios from "axios";
 import { handleApiError } from "../utils/handleApiError";
 import { SERVER_URL } from "../../Contant";
