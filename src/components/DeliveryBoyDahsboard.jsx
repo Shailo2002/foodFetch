@@ -10,9 +10,11 @@ import { Input } from "../ui/Input";
 import { toast } from "react-toastify";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { useNavigate } from "react-router-dom";
+import { useSocket } from "../context/SocketProvider";
 
 export default function DeliveryBoyDahsboard() {
-  const { userData, socket } = useSelector((state) => state.user);
+  const socket = useSocket()
+  const { userData } = useSelector((state) => state.user);
   const [availableAssignments, setAvailableAssignments] = useState(null);
   const [currentOrder, setCurrentOrder] = useState(null);
   const [showOtpBox, setShowOtpBox] = useState(false);

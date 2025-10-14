@@ -5,11 +5,13 @@ import { useNavigate } from "react-router-dom";
 import UserOrderCard from "../components/UserOrderCard";
 import OwnerOrderCard from "../components/OwnerOrderCard";
 import { AddMyOrder, updateOrderStatus } from "../redux/userSlice";
+import { useSocket } from "../context/SocketProvider";
 
 function MyOrders() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { myOrders, userData, socket } = useSelector((state) => state.user);
+  const socket = useSocket()
+  const { myOrders, userData } = useSelector((state) => state.user);
 
   useEffect(() => {
     socket?.on("newOrder", (data) => {

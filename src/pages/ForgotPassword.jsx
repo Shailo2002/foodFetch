@@ -112,7 +112,7 @@ export default function ForgotPassword() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                extraStyle="mt-20"
+                extraStyle="mt-4"
               />
             </div>
 

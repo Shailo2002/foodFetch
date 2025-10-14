@@ -43,25 +43,26 @@ export default function Navbar() {
   const userInitial = userData?.data?.fullName?.charAt(0)?.toUpperCase();
 
   // Reusable logout menu
-  const LogoutMenu = () => (
-    <div className="absolute right-0 mt-2 bg-white shadow-lg rounded-lg border border-gray-200 py-2 w-40 opacity-0 group-hover:opacity-100 group-hover:translate-y-1 transform transition-all duration-200 z-50 pointer-events-auto group-hover:pointer-events-auto hover:opacity-100 hover:pointer-events-auto">
-      <div className="w-full text-left px-4 py-2 font-medium hover:bg-gray-50">
-        {userData?.data.fullName}
-      </div>
-      <button
-        className="w-full text-left px-4 py-2 font-medium hover:bg-gray-50"
-        onClick={() => navigate("/my-orders")}
-      >
-        My Order
-      </button>
-      <button
-        onClick={handleLogOut}
-        className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 transition"
-      >
-        Logout
-      </button>
-    </div>
-  );
+ const LogoutMenu = () => (
+   <div className="absolute right-0 -mt-1 bg-white shadow-lg rounded-lg border border-gray-200 py-2 w-40 hidden group-hover:block z-50 transition-all duration-200 transform origin-top opacity-0 group-hover:opacity-100 group-hover:translate-y-1">
+     <div className="w-full text-left px-4 py-2 font-medium hover:bg-gray-50">
+       {userData?.data.fullName}
+     </div>
+     <button
+       className="w-full text-left px-4 py-2 font-medium hover:bg-gray-50"
+       onClick={() => navigate("/my-orders")}
+     >
+       My Order
+     </button>
+     <button
+       onClick={handleLogOut}
+       className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-50 transition"
+     >
+       Logout
+     </button>
+   </div>
+ );
+
 
   useEffect(() => {
     let tempData = 0 ;
