@@ -4,7 +4,7 @@ import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { SERVER_URL } from "../../Contant";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { setMyShopData } from "../redux/ownerSlice";
 import { useDispatch } from "react-redux";
 

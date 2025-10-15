@@ -1,4 +1,3 @@
-// hooks/useScrollButtons.js
 import { useEffect, useState } from "react";
 
 export const useScrollButtons = (ref) => {

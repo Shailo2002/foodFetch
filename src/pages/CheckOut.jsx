@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { IoLocationSharp, IoSearchOutline } from "react-icons/io5";
 import { TbCurrentLocation } from "react-icons/tb";
 import { MdDeliveryDining } from "react-icons/md";
+import { IoClose } from "react-icons/io5";
 import { FaMobileAlt } from "react-icons/fa";
 import { FaCreditCard } from "react-icons/fa6";
 import { Input } from "../ui/Input";
@@ -14,15 +15,64 @@ import { setAddress, setLocation } from "../redux/mapSlice";
 import axios from "axios";
 import { Button } from "../ui/Button";
 import { SERVER_URL } from "../../Contant";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
 import { AddMyOrder, clearCart } from "../redux/userSlice";
+import L from "leaflet";
+import customMarker from "../assets/marker5.png";
+
+const customIcon = new L.Icon({
+  iconUrl: customMarker,
+  iconSize: [32, 36],
+  iconAnchor: [15, 40],
+  popupAnchor: [0, -50],
+});
+
+function RecenterMap({ location, dispatch, apikey }) {
+  const map = useMap();
+  const prevCoords = useRef({ lat: null, long: null });
+
+  useEffect(() => {
+    if (!location?.lat || !location?.long) return;
+
+    // avoid repeat runs for same coordinates
+    if (
+      prevCoords.current.lat === location.lat &&
+      prevCoords.current.long === location.long
+    ) {
+      return;
+    }
+
+    prevCoords.current = location;
+
+    async function updateMapAndAddress() {
+      map.flyTo([location.lat, location.long], 16, { animate: true });
+
+      try {
+        const res = await axios.get(
+          `https://api.geoapify.com/v1/geocode/reverse?lat=${location.lat}&lon=${location.long}&format=json&apiKey=${apikey}`
+        );
+
+        const formatted = res?.data?.results?.[0]?.formatted;
+        console.log("recenterMap : ", res?.data?.results[0]);
+        if (formatted) dispatch(setAddress(formatted));
+      } catch (err) {
+        console.error("Reverse geocode failed:", err);
+      }
+    }
+
+    updateMapAndAddress();
+  }, [location]);
+
+  return null;
+}
 
 function CheckOut() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [addressInput, setAddressInput] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [loading, setLoading] = useState(false);
   const { location, address } = useSelector((state) => state.map);
   const { cartItems, totalAmount, userData } = useSelector(
     (store) => store.user
@@ -32,31 +82,11 @@ function CheckOut() {
 
   const apikey = import.meta.env.VITE_GEOAPIKEY;
 
-  function RecenterMap({ location }) {
-    const map = useMap();
-
-    useEffect(() => {
-      if (!location?.lat || !location?.long) return;
-
-      async function updateMapAndAddress() {
-        map.flyTo([location.lat, location.long], 16, { animate: true });
-
-        try {
-          const res = await axios.get(
-            `https://api.geoapify.com/v1/geocode/reverse?lat=${location.lat}&lon=${location.long}&format=json&apiKey=${apikey}`
-          );
-          const formatted = res?.data?.results?.[0]?.formatted;
-          if (formatted) dispatch(setAddress(formatted));
-        } catch (err) {
-          console.error("Reverse geocode failed:", err);
-        }
-      }
-
-      updateMapAndAddress();
-    }, [location]);
-
-    return null;
-  }
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      navigate("/", { replace: true });
+    }
+  }, [cartItems, navigate]);
 
   const onDragEnd = (e) => {
     const location = e?.target?._latlng;
@@ -76,6 +106,7 @@ function CheckOut() {
           addressInput
         )}&format=json&apiKey=${apikey}`
       );
+      console.log("getLatLong : ", result?.data?.results[0]);
       dispatch(
         setLocation({
           lat: result?.data?.results[0]?.lat,
@@ -93,6 +124,7 @@ function CheckOut() {
 
   const handlePlaceOrder = async () => {
     try {
+      setLoading(true);
       const result = await axios.post(
         `${SERVER_URL}/api/order/place-order`,
         {
@@ -119,18 +151,16 @@ function CheckOut() {
       } else {
         const orderId = result?.data?.data?.orderId;
         const razorOrder = result?.data?.data?.razorpayOrder;
-        dispatch(clearCart());
-
         openRazorPayWindow(orderId, razorOrder);
       }
     } catch (error) {
       handleApiError(error, "Order failed. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const openRazorPayWindow = (orderId, razorOrder) => {
-    const key = import.meta.env.RAZORPAY_KEY_ID;
-
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: razorOrder.amount,
@@ -142,6 +172,7 @@ function CheckOut() {
       order_id: razorOrder.id,
       handler: async function (response) {
         try {
+          setLoading(true);
           const result = await axios.post(
             `${SERVER_URL}/api/order/verify-payment`,
             { razorpay_payment_id: response.razorpay_payment_id, orderId },
@@ -150,9 +181,12 @@ function CheckOut() {
           toast.success(result?.data?.message || "Order placed successful!");
           console.log("razorpay result : ", result);
           dispatch(AddMyOrder(result?.data?.data));
+          dispatch(clearCart());
           navigate("/order-placed");
         } catch (error) {
           handleApiError(error);
+        } finally {
+          setLoading(false);
         }
       },
     };
@@ -165,14 +199,24 @@ function CheckOut() {
   return (
     <div className="flex justify-center items-center p-6 min-h-screen w-full bg-gradient-to-b from-orange-200 to-white">
       <div
-        className="absolute top-[20px] left-[20px] z-[10] mb-[10px] cursor-pointer"
+        className="hidden lg:block absolute top-[20px] left-[20px] z-[10] mb-[10px] cursor-pointer  hover:bg-orange-300 rounded"
         onClick={() => {
           navigate("/cart");
         }}
       >
-        <IoIosArrowRoundBack size={32} className="text-[#ff4d2d]" />
+        <IoIosArrowRoundBack size={32} className="text-[#ff4d30]" />
       </div>
-      <div className="w-full max-w-[900px] bg-white shadow-xl rounded-2xl p-6 space-y-6">
+
+      <div className="relative w-full max-w-[900px] bg-white shadow-xl rounded-2xl p-6 space-y-6">
+        <div
+          className="block lg:hidden absolute top-[20px] right-[20px] z-[10] mb-[10px] cursor-pointer 
+  bg-white/90 backdrop-blur-sm border border-gray-200 shadow-md hover:shadow-lg 
+  transition-all duration-300 rounded-full p-2 hover:scale-105 active:scale-95"
+          onClick={() => navigate("/cart")}
+        >
+          <IoClose size={22} className="text-[#ff4d30]" />
+        </div>
+
         <h1 className="text-xl font-bold text-gray-800">Checkout</h1>
 
         <section>
@@ -209,15 +253,19 @@ function CheckOut() {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
-                  <RecenterMap location={location} />
+                  <RecenterMap
+                    location={location}
+                    dispatch={dispatch}
+                    apikey={apikey}
+                  />
+
                   <Marker
                     position={[location?.lat, location?.long]}
+                    icon={customIcon}
                     draggable
                     eventHandlers={{ dragend: onDragEnd }}
                   >
-                    <Popup>
-                      A pretty CSS3 popup. <br /> Easily customizable.
-                    </Popup>
+                    <Popup>Your Location</Popup>
                   </Marker>
                 </MapContainer>
               ) : (
@@ -327,6 +375,7 @@ function CheckOut() {
             type="text"
             extraStyle="w-full mt-4 rounded-xl"
             onClick={() => handlePlaceOrder()}
+            loading={loading}
           />
         </section>
       </div>

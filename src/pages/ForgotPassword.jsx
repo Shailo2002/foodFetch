@@ -5,7 +5,7 @@ import axios from "axios";
 import { SERVER_URL } from "../../Contant";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
 
 export default function ForgotPassword() {
@@ -112,7 +112,7 @@ export default function ForgotPassword() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                extraStyle="mt-20"
+                extraStyle="mt-4"
               />
             </div>
 

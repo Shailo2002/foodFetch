@@ -20,6 +20,7 @@ export default function useGetCity() {
       const address = await axios.get(
         `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${apikey}`
       );
+      // console.log("useGetCity hook : ", address?.data?.results[0].city);
       dispatch(setCurrentCity(address?.data?.results[0].city));
       dispatch(setCurrentState(address?.data?.results[0].state));
       dispatch(setCurrentAddress(address?.data?.results[0].formatted));

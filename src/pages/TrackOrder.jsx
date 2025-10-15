@@ -6,10 +6,11 @@ import { SERVER_URL } from "../../Contant";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import DeliveryBoyTracking from "../components/DeliveryBoyTracking";
 import { useSelector } from "react-redux";
+import { useSocket } from "../context/SocketProvider";
 
 function TrackOrder() {
   const { orderId } = useParams();
-  const { socket } = useSelector((state) => state.user);
+  const socket = useSocket();
   const [currentOrder, setCurrentOrder] = useState();
   const [liveLocation, setLiveLocation] = useState({});
   const navigate = useNavigate();

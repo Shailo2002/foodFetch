@@ -7,12 +7,14 @@ import { SERVER_URL } from "../../Contant";
 import { Button } from "../ui/Button";
 import DeliveryBoyTracking from "./DeliveryBoyTracking";
 import { Input } from "../ui/Input";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { useNavigate } from "react-router-dom";
+import { useSocket } from "../context/SocketProvider";
 
 export default function DeliveryBoyDahsboard() {
-  const { userData, socket } = useSelector((state) => state.user);
+  const socket = useSocket();
+  const { userData } = useSelector((state) => state.user);
   const [availableAssignments, setAvailableAssignments] = useState(null);
   const [currentOrder, setCurrentOrder] = useState(null);
   const [showOtpBox, setShowOtpBox] = useState(false);
@@ -37,6 +39,7 @@ export default function DeliveryBoyDahsboard() {
 
   const acceptOrder = async (assignmentId) => {
     try {
+      setLoading(true);
       const result = await axios.get(
         `${SERVER_URL}/api/order/accept-order/${assignmentId}`,
         { withCredentials: true }
@@ -44,6 +47,8 @@ export default function DeliveryBoyDahsboard() {
       getCurrentOrder();
     } catch (error) {
       handleApiError(error, "Order failed. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -173,8 +178,8 @@ export default function DeliveryBoyDahsboard() {
       });
     };
 
-    socket.on("newAssignment", handleNewAssignment);
-    return () => socket.off("newAssignment", handleNewAssignment);
+    socket?.on("newAssignment", handleNewAssignment);
+    return () => socket?.off("newAssignment", handleNewAssignment);
   }, [socket]);
 
   useEffect(() => {
@@ -262,6 +267,7 @@ export default function DeliveryBoyDahsboard() {
                       text="Accept"
                       extraStyle="px-2 h-8 flex items-center"
                       onClick={() => acceptOrder(b?.assignmentId)}
+                      loading={loading}
                     />
                   </div>
                 ))}
@@ -338,6 +344,7 @@ export default function DeliveryBoyDahsboard() {
                   text="Verify"
                   extraStyle="px-2 w-full"
                   onClick={() => handleVerifyOtp()}
+                  loading={loading}
                 />
                 <div
                   className="block text-sm font-medium mb-1 hover:text-blue-600 text-decoration-line: underline cursor-pointer"

@@ -7,7 +7,7 @@ import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../utils/firebase.js";
 import { Button } from "../ui/Button.jsx";
 import { Input } from "../ui/Input.jsx";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError.js";
 import { useDispatch } from "react-redux";
 import { setUserData } from "../redux/userSlice.js";
@@ -74,7 +74,7 @@ function SignIn() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-orange-200 to-white">
-      <div className="bg-white shadow-md rounded-xl px-8 py-10 w-[380px]">
+      <div className="bg-white shadow-md rounded-xl px-8 py-10 w-[380px] mx-4">
         <h1 className="text-2xl font-extrabold text-[#ff4d30] mb-1">
           FoodFetch
         </h1>

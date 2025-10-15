@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { IoMdCall } from "react-icons/io";
 import { MdLocationOn } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { SERVER_URL } from "../../Contant";
 import { handleApiError } from "../utils/handleApiError";
 import { updateOrderStatus } from "../redux/userSlice";

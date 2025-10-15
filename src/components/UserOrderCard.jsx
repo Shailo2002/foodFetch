@@ -105,7 +105,7 @@ function UserOrderCard({ data }) {
           {/* Items */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {shopOrder?.shopOrderItems?.map((item, itemIndex) => (
-              <div>
+              <div key={itemIndex}>
                 {" "}
                 <div
                   key={itemIndex}
@@ -129,7 +129,7 @@ function UserOrderCard({ data }) {
                 {shopOrder?.status === "delivered" && (
                   <div className="flex gap-1 text-lg justify-center mt-2">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <button className={`${selectedRating[item?.item._id] >= star ? "text-yellow-400":"text-gray-400"}`} onClick={() => handleRating(star, item?.item?._id)}>★</button>
+                      <button key={star} className={`${selectedRating[item?.item._id] >= star ? "text-yellow-400":"text-gray-400"}`} onClick={() => handleRating(star, item?.item?._id)}>★</button>
                     ))}
                   </div>
                 )}
