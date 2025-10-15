@@ -8,7 +8,15 @@ import { Button } from "../ui/Button";
 import DeliveryBoyTracking from "./DeliveryBoyTracking";
 import { Input } from "../ui/Input";
 import toast from "react-hot-toast";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketProvider";
 
@@ -83,7 +91,7 @@ export default function DeliveryBoyDahsboard() {
         toast.error(result?.data?.message || "Failed to send OTP");
       }
     } catch (error) {
-      handleApiError(error, "Failed to send OTP");
+      console.log("error : ", error);
     } finally {
       setLoading(false);
     }
@@ -106,7 +114,6 @@ export default function DeliveryBoyDahsboard() {
 
       if (result.data?.success) {
         toast.success(result.data.message || "OTP verified successfully");
-        navigate(0);
       } else {
         toast.error(result.data?.message || "OTP verification failed");
       }
@@ -114,6 +121,7 @@ export default function DeliveryBoyDahsboard() {
       handleApiError(error, "OTP verification failed");
     } finally {
       setLoading(false);
+      navigate(0);
     }
   };
 
@@ -125,7 +133,6 @@ export default function DeliveryBoyDahsboard() {
       );
 
       setTodayDeliveries(result?.data?.data);
-      toast.success(result.data.message || "OTP verified successfully");
     } catch (error) {
       handleApiError(error, "OTP verification failed");
     }
@@ -170,6 +177,8 @@ export default function DeliveryBoyDahsboard() {
 
   useEffect(() => {
     const handleNewAssignment = (data) => {
+      toast?.success("New order Place just now!");
+
       setAvailableAssignments((prev) => {
         if (prev.some((item) => item.assignmentId === data.assignmentId))
           return prev;
@@ -178,6 +187,7 @@ export default function DeliveryBoyDahsboard() {
     };
 
     socket?.on("newAssignment", handleNewAssignment);
+
     return () => socket?.off("newAssignment", handleNewAssignment);
   }, [socket]);
 
@@ -216,17 +226,24 @@ export default function DeliveryBoyDahsboard() {
 
         {/* analytics part */}
         <div className="bg-white rounded-lg p-3 mt-4 mb-4 shadow w-full max-w-[800px]">
-          <h3 className="text-[#ff4d30] font-semibold mb-2 ">Today's Order</h3>
-          <BarChart width={600} height={300} data={todayDeliveries}>
-            <XAxis dataKey="hour" tickFormatter={(h) => `${h}:00`} />
-            <YAxis allowDecimals={false} />
-            <Tooltip
-              formatter={(value) => [value, "orders"]}
-              labelFormatter={(label) => `${label} :00`}
-            />
-            <CartesianGrid strokeDasharray="4 4" />
-            <Bar dataKey="count" fill="#ff4d30" barSize={50} />
-          </BarChart>
+          <h3 className="text-[#ff4d30] font-semibold mb-2 text-center sm:text-left">
+            Today's Order
+          </h3>
+
+          <div className="w-full h-[250px] sm:h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={todayDeliveries}>
+                <XAxis dataKey="hour" tickFormatter={(h) => `${h}:00`} />
+                <YAxis allowDecimals={false} />
+                <Tooltip
+                  formatter={(value) => [value, "orders"]}
+                  labelFormatter={(label) => `${label} :00`}
+                />
+                <CartesianGrid strokeDasharray="4 4" />
+                <Bar dataKey="count" fill="#ff4d30" barSize={40} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
 
           <div className="flex justify-center items-center w-full">
             <div className="bg-gray-50 rounded-lg p-3 mt-4 mb-4 shadow-xl border-gray-50 w-full max-w-[300px] text-center">

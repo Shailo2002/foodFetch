@@ -165,7 +165,7 @@ function OwnerOrderCard({ data }) {
               ? "Assigned Delivery Boys"
               : "Available Delivery Boys"}
           </h3>
-          {availableBoys.length > 0 ? (
+          {availableBoys?.length > 0 ? (
             <div className="space-y-2">
               {availableBoys.map((b, i) => (
                 <div

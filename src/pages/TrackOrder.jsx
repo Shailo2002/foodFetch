@@ -35,7 +35,7 @@ function TrackOrder() {
   };
 
   useEffect(() => {
-    socket.on("updateBoyLocation", ({ deliveryBoyId, latitude, longitude }) => {
+    socket?.on("updateBoyLocation", ({ deliveryBoyId, latitude, longitude }) => {
       setLiveLocation((prev) => ({
         ...prev,
         [deliveryBoyId]: { lat: latitude, lon: longitude },

@@ -20,7 +20,7 @@ function MyOrders() {
     socket?.on("newOrder", (data) => {
       if (data?.shopOrder?.owner?._id == userData?._id) {
         dispatch(AddMyOrder(data));
-        toast.success("New order received!");
+        toast.success("A new order has just been placed.");
       }
     });
     socket?.on("orderStatus", ({ userId, orderId, shopId, status }) => {
