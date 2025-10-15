@@ -39,6 +39,7 @@ export default function DeliveryBoyDahsboard() {
 
   const acceptOrder = async (assignmentId) => {
     try {
+      setLoading(true);
       const result = await axios.get(
         `${SERVER_URL}/api/order/accept-order/${assignmentId}`,
         { withCredentials: true }
@@ -46,6 +47,8 @@ export default function DeliveryBoyDahsboard() {
       getCurrentOrder();
     } catch (error) {
       handleApiError(error, "Order failed. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -264,6 +267,7 @@ export default function DeliveryBoyDahsboard() {
                       text="Accept"
                       extraStyle="px-2 h-8 flex items-center"
                       onClick={() => acceptOrder(b?.assignmentId)}
+                      loading={loading}
                     />
                   </div>
                 ))}
@@ -340,6 +344,7 @@ export default function DeliveryBoyDahsboard() {
                   text="Verify"
                   extraStyle="px-2 w-full"
                   onClick={() => handleVerifyOtp()}
+                  loading={loading}
                 />
                 <div
                   className="block text-sm font-medium mb-1 hover:text-blue-600 text-decoration-line: underline cursor-pointer"
