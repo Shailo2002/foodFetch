@@ -21,7 +21,6 @@ function MyOrders() {
       if (data?.shopOrder?.owner?._id == userData?._id) {
         dispatch(AddMyOrder(data));
         toast.success("New order received!");
-        console.log("newOrder :", data);
       }
     });
     socket?.on("orderStatus", ({ userId, orderId, shopId, status }) => {

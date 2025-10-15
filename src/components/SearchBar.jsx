@@ -15,7 +15,6 @@ function SearchBar({ fullWidth, currentCity }) {
         { withCredentials: true }
       );
       dispatch(setSearchItems(result?.data?.data));
-      console.log(result?.data?.data);
     } catch (error) {
       console.log("error : ", error);
       handleApiError(error);

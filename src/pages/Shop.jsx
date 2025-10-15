@@ -21,7 +21,6 @@ function Shop() {
         { withCredentials: true }
       );
 
-      console.log(result?.data?.data);
       setItems(result?.data?.data?.items);
       setShop(result?.data?.data?.shop);
     } catch (error) {

@@ -4,6 +4,8 @@ import { BiSolidLeaf } from "react-icons/bi";
 import { FaDrumstickBite } from "react-icons/fa";
 import {  useSelector } from "react-redux";
 import FoodQuantityEditor from "./FoodQuantityEditor";
+import VegIcon from "../ui/icons/VegIcon";
+import FoodTypeIcon from "../ui/icons/VegIcon";
 
 function FoodCard({ data }) {
   if (!data) return null;
@@ -33,9 +35,9 @@ function FoodCard({ data }) {
         />
         <div className="absolute top-2 right-2 bg-white">
           {data?.foodtype === "veg" ? (
-            <BiSolidLeaf className="text-green-600" />
+            <FoodTypeIcon className="w-6 h-6 text-green-600" />
           ) : (
-            <FaDrumstickBite className="text-red-600" />
+            <FoodTypeIcon className="w-6 h-6 text-red-600" />
           )}
         </div>
       </div>

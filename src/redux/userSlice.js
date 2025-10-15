@@ -91,7 +91,6 @@ export const userSlice = createSlice({
         return;
       }
 
-      // Case 1: shopOrders is an array (user)
       if (Array.isArray(order.shopOrders)) {
         const shopOrder = order.shopOrders.find((s) => s.shop._id === shopId);
         if (shopOrder) {
@@ -102,7 +101,6 @@ export const userSlice = createSlice({
           console.warn("ShopOrder not found for user with shopId:", shopId);
         }
 
-        // Case 2: shopOrders is a single object (owner)
       } else if (order.shopOrders && order.shopOrders.shop?._id === shopId) {
         console.log("Owner Before:", order.shopOrders.status);
         order.shopOrders.status = status;

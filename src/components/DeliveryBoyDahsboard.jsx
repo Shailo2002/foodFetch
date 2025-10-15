@@ -124,7 +124,6 @@ export default function DeliveryBoyDahsboard() {
         { withCredentials: true }
       );
 
-      console.log("today Delivery Data : ", result?.data?.data);
       setTodayDeliveries(result?.data?.data);
       toast.success(result.data.message || "OTP verified successfully");
     } catch (error) {

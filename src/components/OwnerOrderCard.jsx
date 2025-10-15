@@ -27,11 +27,6 @@ function OwnerOrderCard({ data }) {
         { withCredentials: true }
       );
       setAvailableBoys(result?.data?.data?.availableBoys);
-      console.log("in owner order card ",{
-        orderId,
-        shopId,
-        status,
-      }, result?.data?.success);
 
       if (result?.data?.success) {
         dispatch(
