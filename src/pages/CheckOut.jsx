@@ -18,6 +18,15 @@ import { SERVER_URL } from "../../Contant";
 import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
 import { AddMyOrder, clearCart } from "../redux/userSlice";
+import L from "leaflet";
+import customMarker from "../assets/marker5.png";
+
+const customIcon = new L.Icon({
+  iconUrl: customMarker,
+  iconSize: [32, 36],
+  iconAnchor: [15, 40],
+  popupAnchor: [0, -50],
+});
 
 function CheckOut() {
   const navigate = useNavigate();
@@ -39,7 +48,6 @@ function CheckOut() {
       navigate("/", { replace: true });
     }
   }, [cartItems, navigate]);
-
 
   function RecenterMap({ location }) {
     const map = useMap();
@@ -234,11 +242,12 @@ function CheckOut() {
                   <RecenterMap location={location} />
                   <Marker
                     position={[location?.lat, location?.long]}
+                    icon={customIcon}
                     draggable
                     eventHandlers={{ dragend: onDragEnd }}
                   >
                     <Popup>
-                      A pretty CSS3 popup. <br /> Easily customizable.
+                      Your Location
                     </Popup>
                   </Marker>
                 </MapContainer>
