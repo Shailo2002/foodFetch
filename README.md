@@ -105,7 +105,7 @@ npm run dev
 ```
 
 Frontend will start at [http://localhost:5173](http://localhost:5173)  
-Backend will run at [http://localhost:5000](http://localhost:8000)
+Backend will run at [http://localhost:8000](http://localhost:8000)
 
 ---
 
