@@ -1,0 +1,149 @@
+import { createSlice } from "@reduxjs/toolkit";
+
+export const userSlice = createSlice({
+  name: "user",
+  initialState: {
+    loading: true,
+    userData: null,
+    currentCity: null,
+    currentState: null,
+    currentAddress: null,
+    shopInMyCity: null,
+    ItemInMyCity: null,
+    cartItems: [],
+    totalAmount: 0,
+    myOrders: [],
+    searchItems: null,
+  },
+  reducers: {
+    setUserData: (state, action) => {
+      state.userData = action.payload;
+      state.loading = false;
+    },
+    setCurrentCity: (state, action) => {
+      state.currentCity = action.payload;
+    },
+    setCurrentState: (state, action) => {
+      state.currentState = action.payload;
+    },
+    setCurrentAddress: (state, action) => {
+      state.currentAddress = action.payload;
+    },
+    setShopInMyCity: (state, action) => {
+      state.shopInMyCity = action.payload;
+    },
+    setItemInMyCity: (state, action) => {
+      state.ItemInMyCity = action.payload;
+    },
+    addToCart: (state, action) => {
+      const cartItem = action.payload;
+      const existingItem = state.cartItems.find((i) => i.id == cartItem.id);
+      if (existingItem) {
+        if (cartItem.quantity <= 0) {
+          state.cartItems = state.cartItems.filter((i) => i.id !== cartItem.id);
+        } else {
+          existingItem.quantity = cartItem.quantity;
+        }
+      } else {
+        state.cartItems.push(cartItem);
+      }
+      state.totalAmount = state.cartItems.reduce(
+        (sum, i) => sum + i.price * i.quantity,
+        0
+      );
+    },
+    updateQuantity: (state, action) => {
+      const { id, quantity } = action.payload;
+      const existingItem = state.cartItems.find((i) => i.id == id);
+      if (quantity <= 0) {
+        state.cartItems = state.cartItems.filter((i) => i.id !== id);
+      } else {
+        existingItem.quantity = quantity;
+      }
+      state.totalAmount = state.cartItems.reduce(
+        (sum, i) => sum + i.price * i.quantity,
+        0
+      );
+    },
+    deletefromCart: (state, action) => {
+      const { id } = action.payload;
+      state.cartItems = state.cartItems.filter((i) => i.id !== id);
+      state.totalAmount = state.cartItems.reduce(
+        (sum, i) => sum + i.price * i.quantity,
+        0
+      );
+    },
+    clearCart: (state) => {
+      state.cartItems = [];
+    },
+    setMyOrders: (state, action) => {
+      state.myOrders = action.payload;
+    },
+    AddMyOrder: (state, action) => {
+      state.myOrders = [action.payload, ...state.myOrders];
+    },
+    updateOrderStatus: (state, action) => {
+      const { orderId, shopId, status } = action.payload;
+      const order = state.myOrders.find((o) => o._id === orderId);
+
+      if (!order) {
+        console.warn("Order not found for orderId:", orderId);
+        return;
+      }
+
+      if (Array.isArray(order.shopOrders)) {
+        const shopOrder = order.shopOrders.find((s) => s.shop._id === shopId);
+        if (shopOrder) {
+          console.log("User Before:", shopOrder.status);
+          shopOrder.status = status;
+          console.log("User After:", shopOrder.status);
+        } else {
+          console.warn("ShopOrder not found for user with shopId:", shopId);
+        }
+
+      } else if (order.shopOrders && order.shopOrders.shop?._id === shopId) {
+        console.log("Owner Before:", order.shopOrders.status);
+        order.shopOrders.status = status;
+        console.log("Owner After:", order.shopOrders.status);
+      } else {
+        console.warn("shopOrders format not recognized for orderId:", orderId);
+      }
+    },
+    setSearchItems: (state, action) => {
+      state.searchItems = action.payload;
+    },
+    clearUserData: (state) => {
+      state.userData = null;
+      state.currentCity = null;
+      state.currentAddress = null;
+      state.currentState = null;
+      state.shopInMyCity = null;
+      state.ItemInMyCity = null;
+      state.loading = false;
+      state.cartItems = [];
+      state.totalAmount = 0;
+      state.myOrders = [];
+      state.searchItems = null;
+    },
+  },
+});
+
+export const {
+  setUserData,
+  setCurrentCity,
+  setCurrentState,
+  setCurrentAddress,
+  clearUserData,
+  setShopInMyCity,
+  setItemInMyCity,
+  addToCart,
+  updateQuantity,
+  deletefromCart,
+  setMyOrders,
+  AddMyOrder,
+  updateOrderStatus,
+  setSearchItems,
+  clearCart,
+} = userSlice.actions;
+
+export default userSlice.reducer;
