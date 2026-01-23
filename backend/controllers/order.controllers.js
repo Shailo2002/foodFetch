@@ -52,7 +52,7 @@ export const placeOrder = async (req, res) => {
 
         const subTotal = items.reduce(
           (sum, i) => sum + Number(i.price) * Number(i.quantity),
-          0
+          0,
         );
 
         const shopOrderItems = items.map((i) => {
@@ -69,7 +69,7 @@ export const placeOrder = async (req, res) => {
           subTotal,
           shopOrderItems,
         };
-      })
+      }),
     );
 
     const totalAmount =
@@ -115,7 +115,7 @@ export const placeOrder = async (req, res) => {
 
     await newOrder.populate(
       "shopOrders.shopOrderItems.item",
-      "name image price"
+      "name image price",
     );
     await newOrder.populate("shopOrders.shop", "name");
     await newOrder.populate("shopOrders.owner", "name socketId");
@@ -326,7 +326,7 @@ export const updateOrderStatus = async (req, res) => {
 
       const busyIdsSet = new Set(busyIds?.map((id) => String(id)));
       const availableBoys = nearDeliveryBoys?.filter(
-        (b) => !busyIdsSet.has(String(b._id))
+        (b) => !busyIdsSet.has(String(b._id)),
       );
       const candidates = availableBoys.map((x) => x._id);
 
@@ -385,10 +385,10 @@ export const updateOrderStatus = async (req, res) => {
         deliveryAddress: result?.order?.deliveryAddress,
         items:
           result?.order?.shopOrders?.find((x) =>
-            x._id.equals(result?.shopOrderId)
+            x._id.equals(result?.shopOrderId),
           )?.shopOrderItems || [],
         subtotal: result?.order?.shopOrders?.find((x) =>
-          x._id.equals(result?.shopOrderId)
+          x._id.equals(result?.shopOrderId),
         )?.subTotal,
       };
 
@@ -401,7 +401,7 @@ export const updateOrderStatus = async (req, res) => {
     await order.populate("shopOrders.shop", "name");
     await order.populate(
       "shopOrders.assignedDeliveryBoy",
-      "fullName email mobile"
+      "fullName email mobile",
     );
     await order.populate("user");
 
@@ -422,7 +422,7 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     const updatedShopOrder = order.shopOrders.find((o) =>
-      o.shop.equals(shopId)
+      o.shop.equals(shopId),
     );
 
     return res.status(200).json({
@@ -518,9 +518,9 @@ export const acceptOrder = async (req, res) => {
       });
     }
 
-    (assignment.assignedTo = req.userId),
+    ((assignment.assignedTo = req.userId),
       (assignment.status = "assigned"),
-      (assignment.acceptedAt = new Date());
+      (assignment.acceptedAt = new Date()));
     await assignment.save();
 
     const order = await Order.findById(assignment?.order);
@@ -531,7 +531,7 @@ export const acceptOrder = async (req, res) => {
       });
     }
     const shopOrder = order.shopOrders.find((x) =>
-      x._id.equals(assignment.shopOrderId)
+      x._id.equals(assignment.shopOrderId),
     );
     shopOrder.assignedDeliveryBoy = req.userId;
     await order.save();
@@ -579,7 +579,7 @@ export const getCurrentOrder = async (req, res) => {
     }
 
     const shopOrder = assignment.order.shopOrders.find((so) =>
-      so._id.equals(assignment.shopOrderId)
+      so._id.equals(assignment.shopOrderId),
     );
 
     if (!shopOrder) {
