@@ -12,7 +12,28 @@ import { clearUserData, setUserData } from "../redux/userSlice";
 import { setMyShopData } from "../redux/ownerSlice";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
+import {AnimatePresence} from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
+const list = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, x: -50 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
 export default function Navbar() {
   const { userData, currentCity, cartItems, myOrders } = useSelector(
     (state) => state.user
@@ -21,6 +42,9 @@ export default function Navbar() {
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState(false);
   const [pendingOrder, setPendingOrder] = useState(0);
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 100], [0, -80]); // hide when scrolls down
+  const opacity = useTransform(scrollY, [0, 100], [1, 0]); // fade out
 
   const navigate = useNavigate();
 
@@ -72,18 +96,22 @@ export default function Navbar() {
     });
     setPendingOrder(tempData);
   }, [myOrders]);
+
   return (
     <div>
-      <nav className="bg-[#fff9f6] shadow-[0_4px_12px_rgba(255,77,48,0.15)] border-b border-[#ffe3db] px-4 sm:px-6 py-3 flex justify-between items-center relative">
+      <motion.nav
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="bg-[#fff9f6] shadow-[0_4px_12px_rgba(255,77,48,0.15)] border-b border-[#ffe3db] px-4 sm:px-6 py-3 flex justify-between items-center relative top-0 left-0 w-full z-50"
+      >
         <div className="hidden md:block text-2xl font-extrabold text-[#ff4d30] tracking-wide">
           FoodFetch
         </div>
-
         <div className=" md:hidden flex items-center gap-1">
           <MdOutlineLocationOn size={20} className="text-[#ff4d30]" />
           <span>{currentCity}</span>
         </div>
-
         <div className="hidden md:flex items-center gap-5">
           {/* Location */}
           <div className="flex items-center gap-1 text-gray-700">
@@ -143,7 +171,6 @@ export default function Navbar() {
             </div>
           </div>
         </div>
-
         <div className="flex items-center gap-4 md:hidden">
           {userData?.data?.role === "user" && (
             <button
@@ -179,24 +206,50 @@ export default function Navbar() {
             {menuOpen ? <HiOutlineX /> : <HiOutlineMenu />}
           </button>
         </div>
-
-        {menuOpen && (
-          <div className="absolute top-[64px] right-0 w-full bg-white border-t border-[#ffe3db] flex flex-col gap-4 p-4 shadow-md md:hidden z-50">
-            <button
-              className="flex items-center gap-2 text-gray-700 hover:text-[#ff4d30] transition"
-              onClick={() => navigate("/my-orders")}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              key="menu"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{
+                opacity: 0,
+                height: 0,
+                transition: {
+                  opacity: { duration: 0.25 },
+                  height: { duration: 0.4, delay: 0.1 },
+                },
+              }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className="absolute top-[64px] right-0 w-full bg-white border-t border-[#ffe3db] shadow-md md:hidden z-50 overflow-hidden"
             >
-              My Orders
-            </button>
-            <button
-              onClick={handleLogOut}
-              className="text-red-500 hover:text-red-600 text-left"
-            >
-              Sign Out
-            </button>
-          </div>
-        )}
-      </nav>
+              {/* Animated list of menu items */}
+              <motion.ul
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                variants={list}
+                className="flex flex-col gap-4 p-4"
+              >
+                <motion.li
+                  variants={item}
+                  className="text-gray-700 hover:text-[#ff4d30] cursor-pointer"
+                  onClick={() => navigate("/my-orders")}
+                >
+                  My Orders
+                </motion.li>
+                <motion.li
+                  variants={item}
+                  className="text-red-500 hover:text-red-600 cursor-pointer"
+                  onClick={handleLogOut}
+                >
+                  Sign Out
+                </motion.li>
+              </motion.ul>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.nav>
 
       {userData.data.role == "user" && (
         <div className="block md:hidden mx-6 my-6">

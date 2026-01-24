@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children }) {
   const { userData } = useSelector((state) => state.user);
-  return userData ? children : <Navigate to="signin" replace/>;
+  return userData ? children : <Navigate to="/" replace/>;
 }
 
 export default ProtectedRoute;

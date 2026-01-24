@@ -1,12 +1,13 @@
-import Navbar from "./Navbar";
-import CategoryCard from "./CategoryCard";
-import { categories } from "../category";
+import Navbar from "../Navbar";
+import CategoryCard from "../CategoryCard";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { SERVER_URL } from "../../Contant";
-import FoodCard from "./FoodCard";
+import FoodCard from "../FoodCard";
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { categories } from "../../data/category";
+import { motion } from "framer-motion";
+
 
 export default function UserDashboard() {
   const CatescrollRef = useRef();
@@ -47,12 +48,12 @@ export default function UserDashboard() {
   const scroll = (ref, dir) => {
     if (dir === "left") {
       ref.current.scrollBy({
-        left: dir == "left" ? -138 : 200,
+        left: dir == "left" ? -165 : 200,
         behavior: "smooth",
       });
     } else {
       ref.current.scrollBy({
-        left: dir == "right" ? +138 : 200,
+        left: dir == "right" ? +165 : 200,
         behavior: "smooth",
       });
     }
@@ -106,7 +107,7 @@ export default function UserDashboard() {
         {/* shop categories */}
         <div className="w-full max-w-5xl relative">
           <h2 className="text-lg font-semibold mb-3 pt-6 px-10">
-            Inspiration for your first order
+            What's On Your Mind?
           </h2>
 
           {showCateLeftButton && (
@@ -120,25 +121,31 @@ export default function UserDashboard() {
 
           <div
             ref={CatescrollRef}
-            className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide mx-8"
+            className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide mx-8 pt-4 px-4 "
           >
             {categories?.map((cate, index) => (
-              <div
-                className={`flex-shrink-0 ${
-                  selectedCategory == cate.category && ""
-                }`}
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, scale: 0.8, x: 50 }}
+                whileInView={{ opacity: 1, scale: 1, x: 0 }}
+                transition={{
+                  duration: 0.4,
+                  ease: "easeOut",
+                  delay: index * 0.05,
+                }}
+                viewport={{ once: true, amount: 0.1 }}
+                className="flex-shrink-0"
                 onClick={() => {
-                  setSelectedCategory(cate?.category);
-                  handleFilterByCategory(cate?.category);
+                  setSelectedCategory(cate.category);
+                  handleFilterByCategory(cate.category);
                 }}
               >
                 <CategoryCard
-                  name={cate?.category}
-                  image={cate?.image}
+                  name={cate.category}
+                  image={cate.image}
                   selectedCategory={selectedCategory}
                 />
-              </div>
+              </motion.div>
             ))}
           </div>
 
@@ -168,7 +175,7 @@ export default function UserDashboard() {
           )}
 
           <div
-            className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide px-10"
+            className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide px-10 pt-4"
             ref={ShopScrollRef}
           >
             {shopInMyCity?.map((shop, index) => (

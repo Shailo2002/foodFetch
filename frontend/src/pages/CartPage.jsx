@@ -17,7 +17,7 @@ function CartPage() {
           <div
             className=" z-[10]"
             onClick={() => {
-              navigate("/");
+              navigate("/home");
             }}
           >
             <IoIosArrowRoundBack size={35} className="text-[#ff4d2d]" />

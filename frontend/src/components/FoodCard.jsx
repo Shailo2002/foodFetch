@@ -1,11 +1,9 @@
 import React from "react";
 import { FaRegStar, FaStar } from "react-icons/fa";
-import { BiSolidLeaf } from "react-icons/bi";
-import { FaDrumstickBite } from "react-icons/fa";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import FoodQuantityEditor from "./FoodQuantityEditor";
-import VegIcon from "../ui/icons/VegIcon";
 import FoodTypeIcon from "../ui/icons/VegIcon";
+import { motion } from "framer-motion";
 
 function FoodCard({ data }) {
   if (!data) return null;
@@ -18,16 +16,33 @@ function FoodCard({ data }) {
   const renderStar = (rating) => {
     for (let i = 0; i < 5; i++) {
       if (i >= rating) {
-        stars.push(<FaRegStar className="text-yellow-500 text-lg size-3.5" key={i}/>);
+        stars.push(
+          <FaRegStar className="text-yellow-500 text-lg size-3.5" key={i} />
+        );
       } else {
-        stars.push(<FaStar className="text-yellow-500 text-lg size-3.5" key={i}/>);
+        stars.push(
+          <FaStar className="text-yellow-500 text-lg size-3.5" key={i} />
+        );
       }
     }
     return stars;
   };
 
   return (
-    <div className=" border-2 border-[#9e4816] rounded-xl shadow-xl shadow-gray-200 hover:shadow-lg transition-shadow duration-300">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8, y: 40 }}
+      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{
+        duration: 0.5,
+        ease: "easeOut",
+        delay: 0.1,
+      }}
+      viewport={{
+        once: true,
+        amount: 0.1, 
+      }}
+      className="border-2 border-[#9e4816] rounded-xl shadow-xl shadow-gray-200 hover:shadow-lg transition-shadow duration-300"
+    >
       <div className="relative">
         <img
           src={data?.image}
@@ -53,7 +68,7 @@ function FoodCard({ data }) {
           <FoodQuantityEditor data={data} itemInCart={itemInCart} />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

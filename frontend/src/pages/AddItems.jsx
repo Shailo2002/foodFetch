@@ -67,7 +67,7 @@ export default function AddItems() {
       );
       dispatch(setMyShopData(result?.data?.data));
       toast.success(result.data.message || "shop added successful!");
-      navigate("/");
+      navigate("/home");
     } catch (error) {
       console.log("error : ", error);
       handleApiError(error, "shop registration failed. Try again.");
@@ -81,7 +81,7 @@ export default function AddItems() {
       <div
         className="absolute top-[20px] left-[20px] z-[10] mb-[10px] cursor-pointer"
         onClick={() => {
-          navigate("/");
+          navigate("/home");
         }}
       >
         <IoIosArrowRoundBack size={32} className="text-[#ff4d2d]" />

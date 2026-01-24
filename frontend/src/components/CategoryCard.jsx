@@ -1,21 +1,49 @@
 import React from "react";
+import { motion } from "framer-motion";
 
-function CategoryCard({ name, image, selectedCategory }) {
+export default function CategoryCard({ name, image, selectedCategory }) {
+  const isSelected = selectedCategory === name;
+
   return (
-    <div
-      className={`relative border-2 border-[#9e4816] rounded-2xl shadow-xl shadow-gray-200 hover:shadow-lg transition-shadow ${
-        selectedCategory === name && "border-5 border-green-400 "
-      }`}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8, y: 30 }}
+      animate={{
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        transition: { duration: 0.5, ease: "easeOut" },
+      }}
+      whileHover={{ scale: 1.08 }}
+      whileTap={{ scale: 0.95 }}
+      className="flex flex-col items-center cursor-pointer"
     >
-      <img
-        src={image}
-        className="w-30 h-30 object-cover object-center rounded-xl hover:scale-110 transition-transform duration-300 "
-      />
-      <div className="absolute bottom-0 bg-gray-100 w-full text-center opacity-80 rounded-b-2xl">
-        {name}
-      </div>
-    </div>
+      <motion.div
+        animate={{
+          borderColor: isSelected ? "#d04b26" : "#000",
+          scale: isSelected ? 1.1 : 1,
+          boxShadow: isSelected
+            ? "0px 0px 20px rgba(208,75,38,0.6)"
+            : "0px 0px 10px rgba(0,0,0,0.1)",
+        }}
+        transition={{
+          type: "spring",
+          stiffness: 200,
+          damping: 15,
+        }}
+        className="relative border-2 rounded-full w-36 h-36 flex items-center justify-center overflow-hidden"
+      >
+        <motion.img
+          src={image}
+          alt={name}
+          className="w-full h-full object-cover object-center rounded-full"
+          animate={{
+            scale: isSelected ? 1 : 1,
+          }}
+          transition={{ duration: 0.3 }}
+        />
+      </motion.div>
+
+      <div className="mt-2 text-center opacity-80 font-medium">{name}</div>
+    </motion.div>
   );
 }
-
-export default React.memo(CategoryCard);

@@ -49,7 +49,7 @@ function MyOrders() {
           <div
             className=" z-[10]"
             onClick={() => {
-              navigate("/");
+              navigate("/home");
             }}
           >
             <IoIosArrowRoundBack size={35} className="text-[#ff4d2d]" />
@@ -89,7 +89,7 @@ function MyOrders() {
                     <Button
                       variant="primary"
                       text="Order Now"
-                      onClick={() => navigate("/")}
+                      onClick={() => navigate("/home")}
                       extraStyle={"p-2"}
                     />
                   )}

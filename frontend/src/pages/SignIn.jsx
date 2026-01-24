@@ -61,7 +61,7 @@ function SignIn() {
 
       if (response.data?.success) {
         toast.success(response.data.message || "Google login successful!");
-        navigate("/");
+        navigate("/home");
       } else {
         toast.error(response.data?.message || "Google login failed");
       }

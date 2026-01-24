@@ -34,23 +34,41 @@ function Shop() {
   }, [shopId]);
   return (
     <div className="bg-gradient-to-b from-orange-200 to-white">
-      <div className="relative">
-        <img src={shop?.image} className="w-full max-h-[300px] object-center" />
-
+      <div className="relative w-full bg-gradient-to-r from-orange-500 via-orange-400 to-orange-300 text-white py-10 px-6 sm:px-12 rounded-b-3xl shadow-lg">
+        {/* Back Button */}
         <div
-          className="absolute left-2 top-2 flex items-center gap-1 bg-black/60 rounded-full w-min px-2 py-1 shadow-md backdrop-blur-sm cursor-pointer"
-          onClick={() => navigate("/")}
+          className="absolute top-4 left-4 flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white rounded-full px-3 py-1.5 backdrop-blur-md cursor-pointer transition-all duration-300"
+          onClick={() => navigate("/home")}
         >
-          <IoArrowBack className="text-white" />
-          <span className="text-white">Back</span>
+          <IoArrowBack size={18} />
+          <span className="text-sm font-medium">Back</span>
         </div>
 
-        <div className="flex flex-col items-center absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2  text-white">
-          <FaShop className="size-12" />
-          <span className="font-extrabold text-3xl">{shop?.name}</span>
-          <div className="flex items-center gap-1 ">
-            <FaLocationDot size={20} className="text-red-800" />
-            <span className="font-semibold pt-1">{shop?.address}</span>
+        {/* Content Section */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 mt-4 text-center sm:text-left">
+          {/* Logo / Square Image */}
+          <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl overflow-hidden shadow-md border-4 border-white/50">
+            <img
+              src={shop?.image}
+              alt={shop?.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Text Section */}
+          <div className="flex flex-col items-center sm:items-start gap-2">
+            <h1 className="text-3xl sm:text-4xl font-extrabold drop-shadow-md tracking-tight">
+              {shop?.name}
+            </h1>
+            <div className="flex items-center justify-center sm:justify-start gap-2">
+              <FaLocationDot
+                size={20}
+                className="text-red-800 drop-shadow-sm"
+              />
+              <span className="text-base sm:text-lg font-semibold text-white/90 max-w-[300px]">
+                {shop?.address}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -61,7 +79,7 @@ function Shop() {
           <span className="font-bold text-xl">Our Menu</span>
         </div>
 
-        <div className="flex h-auto items-center justify-start flex-wrap gap-[20px] overflow-x-auto scroll-smooth scrollbar-hide px-10 mt-4 max-w-[1200px]">
+        <div className="flex h-auto items-center justify-center flex-wrap gap-[20px] overflow-x-auto scroll-smooth scrollbar-hide px-10 mt-4 max-w-[1200px]">
           {items?.map((item, index) => (
             <FoodCard key={index} data={item} />
           ))}

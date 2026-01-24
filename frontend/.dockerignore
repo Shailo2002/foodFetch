@@ -1,0 +1,29 @@
+# Dependencies
+node_modules
+
+# Production build output
+dist
+build
+
+# Project management
+.git
+.gitignore
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE/OS specific files
+.vscode
+.idea
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.cache
+
+# Docker specific files (if in the same directory)
+Dockerfile
+docker-compose*.yml

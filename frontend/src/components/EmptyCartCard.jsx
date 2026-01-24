@@ -26,7 +26,7 @@ function EmptyCartCard() {
       <Button
         variant="primary"
         text="Go to Home"
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/home")}
         extraStyle={"p-2"}
       />
     </div>

@@ -51,7 +51,7 @@ function RecenterMap({ location, dispatch, apikey }) {
 
       try {
         const res = await axios.get(
-          `https://api.geoapify.com/v1/geocode/reverse?lat=${location.lat}&lon=${location.long}&format=json&apiKey=${apikey}`
+          `https://api.geoapify.com/v1/geocode/reverse?lat=${location.lat}&lon=${location.long}&format=json&apiKey=${apikey}`,
         );
 
         const formatted = res?.data?.results?.[0]?.formatted;
@@ -75,7 +75,7 @@ function CheckOut() {
   const [loading, setLoading] = useState(false);
   const { location, address } = useSelector((state) => state.map);
   const { cartItems, totalAmount, userData } = useSelector(
-    (store) => store.user
+    (store) => store.user,
   );
   const deliveryFee = totalAmount > 500 ? 0 : 40;
   const amountWithDeliveryFee = totalAmount + deliveryFee;
@@ -97,14 +97,14 @@ function CheckOut() {
     try {
       const result = await axios.get(
         `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
-          addressInput
-        )}&format=json&apiKey=${apikey}`
+          addressInput,
+        )}&format=json&apiKey=${apikey}`,
       );
       dispatch(
         setLocation({
           lat: result?.data?.results[0]?.lat,
           long: result?.data?.results[0]?.lon,
-        })
+        }),
       );
     } catch (error) {
       console.log("error :", error);
@@ -129,7 +129,7 @@ function CheckOut() {
             longitude: location?.long,
           },
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (paymentMethod == "cod") {
@@ -169,7 +169,7 @@ function CheckOut() {
           const result = await axios.post(
             `${SERVER_URL}/api/order/verify-payment`,
             { razorpay_payment_id: response.razorpay_payment_id, orderId },
-            { withCredentials: true }
+            { withCredentials: true },
           );
           toast.success(result?.data?.message || "Order placed successful!");
           dispatch(AddMyOrder(result?.data?.data));

@@ -1,0 +1,31 @@
+# Dependencies (installed in container)
+node_modules/
+
+# Environment files
+.env
+.env.*
+
+# Version control
+.git
+.github/
+.gitignore
+
+# Development and testing artifacts
+*.log
+npm-debug.log*
+coverage/
+.eslintcache
+.vscode/
+
+# Build outputs (built in container)
+dist/
+build/
+ejected/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+
+# Docker specific files
+*Dockerfile*
+*docker-compose*

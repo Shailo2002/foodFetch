@@ -5,7 +5,6 @@ import bcrypt from "bcryptjs";
 
 export const signUp = async (req, res) => {
   try {
-
     const { fullName, password, email, mobile, role } = req.body;
 
     if (!fullName || !password || !email || !mobile || !role) {
@@ -49,12 +48,12 @@ export const signUp = async (req, res) => {
 
     const token = await genToken(user._id);
 
-res.cookie("token", token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  maxAge: 10 * 24 * 60 * 60 * 1000,
-});
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 10 * 24 * 60 * 60 * 1000,
+    });
 
     return res.status(201).json({
       success: true,
@@ -78,8 +77,6 @@ res.cookie("token", token, {
 
 export const signIn = async (req, res) => {
   try {
-    
-
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -108,12 +105,11 @@ export const signIn = async (req, res) => {
     const token = await genToken(user._id);
 
     res.cookie("token", token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  maxAge: 10 * 24 * 60 * 60 * 1000,
-});
-
+      httpOnly: true,
+      secure: false,
+      sameSite: "none",
+      maxAge: 10 * 24 * 60 * 60 * 1000,
+    });
 
     return res.status(200).json({
       success: true,
@@ -153,7 +149,6 @@ export const signOut = async (req, res) => {
 
 export const sendOtp = async (req, res) => {
   try {
-
     const { email } = req.body;
     if (!email) {
       return res.status(400).json({
@@ -308,13 +303,12 @@ export const googleAuth = async (req, res) => {
 
     const token = await genToken(user._id);
 
-   res.cookie("token", token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  maxAge: 10 * 24 * 60 * 60 * 1000,
-});
-
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 10 * 24 * 60 * 60 * 1000,
+    });
 
     return res.status(200).json({
       success: true,
