@@ -2,17 +2,16 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setLocation } from "../redux/mapSlice";
-import { SERVER_URL } from "../../Contant";
 
 export default function useUpdateLocation() {
   const dispatch = useDispatch();
   const { userData } = useSelector((state) => state.user);
   useEffect(() => {
-    const updateLocation = async (lat,lon) => {
+    const updateLocation = async (lat, lon) => {
       const result = await axios.post(
-        `${SERVER_URL}/api/user/update-location`,
+        `/api/user/update-location`,
         { lat, lon },
-        { withCredentials: true }
+        { withCredentials: true },
       );
     };
 

@@ -4,7 +4,6 @@ import { IoMdCall } from "react-icons/io";
 import { MdLocationOn } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { SERVER_URL } from "../../Contant";
 import { handleApiError } from "../utils/handleApiError";
 import { updateOrderStatus } from "../redux/userSlice";
 
@@ -22,9 +21,9 @@ function OwnerOrderCard({ data }) {
   const handleUpdateStatus = async (status, orderId, shopId) => {
     try {
       const result = await axios.post(
-        `${SERVER_URL}/api/order/update-status/${orderId}/${shopId}`,
+        `/api/order/update-status/${orderId}/${shopId}`,
         { status: status },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setAvailableBoys(result?.data?.data?.availableBoys);
 
@@ -34,7 +33,7 @@ function OwnerOrderCard({ data }) {
             orderId,
             shopId,
             status,
-          })
+          }),
         );
         toast.success(result?.data?.message || "Order status updated!");
       } else {
@@ -146,7 +145,7 @@ function OwnerOrderCard({ data }) {
             handleUpdateStatus(
               e.target.value,
               data._id,
-              data.shopOrders.shop._id
+              data.shopOrders.shop._id,
             );
           }}
           className="rounded-md border border-[#ff4d30] text-[#ff4d30] px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#ff4d30] bg-white cursor-pointer"

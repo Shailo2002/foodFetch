@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { handleApiError } from "../utils/handleApiError";
 import axios from "axios";
-import { SERVER_URL } from "../../Contant";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import DeliveryBoyTracking from "../components/DeliveryBoyTracking";
 import { useSelector } from "react-redux";
@@ -24,10 +23,9 @@ function TrackOrder() {
 
   const handleGetOrder = async () => {
     try {
-      const order = await axios.get(
-        `${SERVER_URL}/api/order/get-order-by-id/${orderId}`,
-        { withCredentials: true }
-      );
+      const order = await axios.get(`/api/order/get-order-by-id/${orderId}`, {
+        withCredentials: true,
+      });
       setCurrentOrder(order?.data?.data);
     } catch (error) {
       handleApiError(error);
@@ -35,12 +33,15 @@ function TrackOrder() {
   };
 
   useEffect(() => {
-    socket?.on("updateBoyLocation", ({ deliveryBoyId, latitude, longitude }) => {
-      setLiveLocation((prev) => ({
-        ...prev,
-        [deliveryBoyId]: { lat: latitude, lon: longitude },
-      }));
-    });
+    socket?.on(
+      "updateBoyLocation",
+      ({ deliveryBoyId, latitude, longitude }) => {
+        setLiveLocation((prev) => ({
+          ...prev,
+          [deliveryBoyId]: { lat: latitude, lon: longitude },
+        }));
+      },
+    );
   }, [socket]);
 
   useEffect(() => {

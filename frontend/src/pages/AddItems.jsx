@@ -9,11 +9,9 @@ import axios from "axios";
 import { setMyShopData } from "../redux/ownerSlice";
 import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
-import { SERVER_URL } from "../../Contant";
 
 export default function AddItems() {
   const navigate = useNavigate();
-
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
@@ -21,7 +19,7 @@ export default function AddItems() {
   const [backendImage, setBackendImage] = useState(null);
   const [category, setCategory] = useState("");
   const [foodType, setFoodType] = useState("veg");
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const categories = [
     "Snacks",
@@ -46,7 +44,7 @@ export default function AddItems() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -58,21 +56,17 @@ export default function AddItems() {
         formData.append("image", backendImage);
       }
 
-      const result = await axios.post(
-        `${SERVER_URL}/api/item/add-item`,
-        formData,
-        {
-          withCredentials: true,
-        }
-      );
+      const result = await axios.post(`/api/item/add-item`, formData, {
+        withCredentials: true,
+      });
       dispatch(setMyShopData(result?.data?.data));
       toast.success(result.data.message || "shop added successful!");
       navigate("/home");
     } catch (error) {
       console.log("error : ", error);
       handleApiError(error, "shop registration failed. Try again.");
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 

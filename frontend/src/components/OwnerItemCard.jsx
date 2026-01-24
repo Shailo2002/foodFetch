@@ -3,7 +3,6 @@ import React from "react";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { SERVER_URL } from "../../Contant";
 import toast from "react-hot-toast";
 import { setMyShopData } from "../redux/ownerSlice";
 import { useDispatch } from "react-redux";
@@ -13,12 +12,9 @@ export default function OwnerItemCard({ props }) {
 
   const handleDeleteItem = async (itemId) => {
     try {
-      const result = await axios.delete(
-        `${SERVER_URL}/api/item/delete-item/${itemId}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const result = await axios.delete(`/api/item/delete-item/${itemId}`, {
+        withCredentials: true,
+      });
       dispatch(setMyShopData(result?.data?.data));
       toast.success("item deleted successfully");
     } catch (error) {

@@ -14,7 +14,6 @@ import "leaflet/dist/leaflet.css";
 import { setAddress, setLocation } from "../redux/mapSlice";
 import axios from "axios";
 import { Button } from "../ui/Button";
-import { SERVER_URL } from "../../Contant";
 import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
 import { AddMyOrder, clearCart } from "../redux/userSlice";
@@ -119,7 +118,7 @@ function CheckOut() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `${SERVER_URL}/api/order/place-order`,
+        `/api/order/place-order`,
         {
           cartItems,
           paymentMethod,
@@ -167,7 +166,7 @@ function CheckOut() {
         try {
           setLoading(true);
           const result = await axios.post(
-            `${SERVER_URL}/api/order/verify-payment`,
+            `/api/order/verify-payment`,
             { razorpay_payment_id: response.razorpay_payment_id, orderId },
             { withCredentials: true },
           );

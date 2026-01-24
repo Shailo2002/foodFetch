@@ -3,7 +3,6 @@ import Navbar from "./Navbar";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { handleApiError } from "../utils/handleApiError";
-import { SERVER_URL } from "../../Contant";
 import { Button } from "../ui/Button";
 import DeliveryBoyTracking from "./DeliveryBoyTracking";
 import { Input } from "../ui/Input";
@@ -35,10 +34,9 @@ export default function DeliveryBoyDahsboard() {
 
   const handleGetAssignments = async () => {
     try {
-      const result = await axios.get(
-        `${SERVER_URL}/api/order/get-assignments`,
-        { withCredentials: true }
-      );
+      const result = await axios.get(`/api/order/get-assignments`, {
+        withCredentials: true,
+      });
       setAvailableAssignments(result?.data?.data);
     } catch (error) {
       handleApiError(error, "Order failed. Try again.");
@@ -49,8 +47,8 @@ export default function DeliveryBoyDahsboard() {
     try {
       setLoading(true);
       const result = await axios.get(
-        `${SERVER_URL}/api/order/accept-order/${assignmentId}`,
-        { withCredentials: true }
+        `/api/order/accept-order/${assignmentId}`,
+        { withCredentials: true },
       );
       getCurrentOrder();
     } catch (error) {
@@ -62,10 +60,9 @@ export default function DeliveryBoyDahsboard() {
 
   const getCurrentOrder = async () => {
     try {
-      const result = await axios.get(
-        `${SERVER_URL}/api/order/get-current-order`,
-        { withCredentials: true }
-      );
+      const result = await axios.get(`/api/order/get-current-order`, {
+        withCredentials: true,
+      });
       setCurrentOrder(result?.data?.data);
     } catch (error) {
       // handleApiError(error, "Order failed. Try again.");
@@ -77,12 +74,12 @@ export default function DeliveryBoyDahsboard() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `${SERVER_URL}/api/order/send-delivery-otp`,
+        `/api/order/send-delivery-otp`,
         {
           orderId: currentOrder?._id,
           shopOrderId: currentOrder?.shopOrder?._id,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (result?.data?.success) {
@@ -103,13 +100,13 @@ export default function DeliveryBoyDahsboard() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `${SERVER_URL}/api/order/verify-delivery-otp`,
+        `/api/order/verify-delivery-otp`,
         {
           shopOrderId: currentOrder?.shopOrder?._id,
           orderId: currentOrder?._id,
           otp,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (result.data?.success) {
@@ -127,10 +124,9 @@ export default function DeliveryBoyDahsboard() {
 
   const handleTodayDeliveries = async () => {
     try {
-      const result = await axios.get(
-        `${SERVER_URL}/api/order/get-today-deliveries`,
-        { withCredentials: true }
-      );
+      const result = await axios.get(`/api/order/get-today-deliveries`, {
+        withCredentials: true,
+      });
 
       setTodayDeliveries(result?.data?.data);
     } catch (error) {
@@ -158,7 +154,7 @@ export default function DeliveryBoyDahsboard() {
         (error) => {
           console.log("Geolocation error:", error);
         },
-        { enableHighAccuracy: true }
+        { enableHighAccuracy: true },
       );
     } else {
       console.log("Geolocation not supported in this browser");
@@ -195,7 +191,7 @@ export default function DeliveryBoyDahsboard() {
     const ratePerDelivery = 50;
     const todayEarning = todayDeliveries.reduce(
       (sum, d) => sum + d?.count * ratePerDelivery,
-      0
+      0,
     );
     setTodayTotalEarning(todayEarning);
   }, [todayDeliveries]);

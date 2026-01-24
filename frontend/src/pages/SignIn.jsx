@@ -27,7 +27,7 @@ function SignIn() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `${SERVER_URL}/api/auth/signin`,
+        `/api/auth/signin`,
         { email, password },
         { withCredentials: true }
       );
@@ -53,7 +53,7 @@ function SignIn() {
       const result = await signInWithPopup(auth, provider);
 
       const response = await axios.post(
-        `${SERVER_URL}/api/auth/google-auth`,
+        `/api/auth/google-auth`,
         { fullName: result.user.displayName, email: result.user.email },
         { withCredentials: true }
       );

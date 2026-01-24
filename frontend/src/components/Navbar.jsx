@@ -7,12 +7,11 @@ import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { handleApiError } from "../utils/handleApiError";
-import { SERVER_URL } from "../../Contant";
 import { clearUserData, setUserData } from "../redux/userSlice";
 import { setMyShopData } from "../redux/ownerSlice";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
-import {AnimatePresence} from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 const list = {
@@ -36,7 +35,7 @@ const item = {
 };
 export default function Navbar() {
   const { userData, currentCity, cartItems, myOrders } = useSelector(
-    (state) => state.user
+    (state) => state.user,
   );
   const myShopData = useSelector((state) => state.owner.myShopData);
   const dispatch = useDispatch();
@@ -52,7 +51,7 @@ export default function Navbar() {
     try {
       console.log("logout button");
 
-      const response = await axios.get(`${SERVER_URL}/api/auth/signout`, {
+      const response = await axios.get(`/api/auth/signout`, {
         withCredentials: true,
       });
       dispatch(clearUserData());

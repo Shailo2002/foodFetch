@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useEffect } from "react";
-import { SERVER_URL } from "../../Contant";
 import { useDispatch, useSelector } from "react-redux";
 import { setMyOrders } from "../redux/userSlice";
 
@@ -10,7 +9,7 @@ export default function useGetMyOrders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const result = await axios.get(`${SERVER_URL}/api/order/my-orders`, {
+        const result = await axios.get(`/api/order/my-orders`, {
           withCredentials: true,
         });
 

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { SERVER_URL } from "../../Contant";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import toast from "react-hot-toast";
@@ -23,9 +22,9 @@ export default function ForgotPassword() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `${SERVER_URL}/api/auth/send-otp`,
+        `/api/auth/send-otp`,
         { email },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (result.data?.success) {
@@ -47,9 +46,9 @@ export default function ForgotPassword() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `${SERVER_URL}/api/auth/verify-otp`,
+        `/api/auth/verify-otp`,
         { email, otp },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (result.data?.success) {
@@ -74,9 +73,9 @@ export default function ForgotPassword() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `${SERVER_URL}/api/auth/reset-password`,
+        `/api/auth/reset-password`,
         { newPassword: newpassword, email },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       if (result.data?.success) {

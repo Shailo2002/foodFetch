@@ -18,7 +18,6 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-console.log("cors url : ", process.env.FRONTEND_URLS);
 const allowedOrigins = process.env.FRONTEND_URLS
   ? process.env.FRONTEND_URLS.split(",")
   : ["http://localhost:5173"];
@@ -27,8 +26,6 @@ app.use(
   cors({
     origin: function (origin, callback) {
       if (!origin || allowedOrigins.includes(origin)) {
-        console.log("allowed origin : ", origin);
-
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));

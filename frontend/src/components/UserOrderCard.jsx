@@ -3,7 +3,6 @@ import { Button } from "../ui/Button";
 import { MdOutlineAccessTime } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { SERVER_URL } from "../../Contant";
 
 function UserOrderCard({ data }) {
   const navigate = useNavigate();
@@ -30,9 +29,9 @@ function UserOrderCard({ data }) {
   const handleRating = async (rating, itemId) => {
     try {
       const result = await axios.post(
-        `${SERVER_URL}/api/item/rating`,
+        `/api/item/rating`,
         { rating, itemId },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setSelectedRating((prev) => ({
         ...prev,
@@ -129,7 +128,13 @@ function UserOrderCard({ data }) {
                 {shopOrder?.status === "delivered" && (
                   <div className="flex gap-1 text-lg justify-center mt-2">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <button key={star} className={`${selectedRating[item?.item._id] >= star ? "text-yellow-400":"text-gray-400"}`} onClick={() => handleRating(star, item?.item?._id)}>★</button>
+                      <button
+                        key={star}
+                        className={`${selectedRating[item?.item._id] >= star ? "text-yellow-400" : "text-gray-400"}`}
+                        onClick={() => handleRating(star, item?.item?._id)}
+                      >
+                        ★
+                      </button>
                     ))}
                   </div>
                 )}

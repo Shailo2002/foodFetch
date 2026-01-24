@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { IoIosSearch } from "react-icons/io";
-import { SERVER_URL } from "../../Contant";
 import { useDispatch } from "react-redux";
 import { setSearchItems } from "../redux/userSlice";
 
@@ -11,8 +10,8 @@ function SearchBar({ fullWidth, currentCity }) {
   const handleSearchItems = async () => {
     try {
       const result = await axios.get(
-        `${SERVER_URL}/api/item/search-items?query=${query}&city=${currentCity}`,
-        { withCredentials: true }
+        `/api/item/search-items?query=${query}&city=${currentCity}`,
+        { withCredentials: true },
       );
       dispatch(setSearchItems(result?.data?.data));
     } catch (error) {
