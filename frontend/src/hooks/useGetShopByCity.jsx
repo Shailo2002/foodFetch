@@ -16,6 +16,7 @@ export default function useGetShopByCity() {
           { withCredentials: true },
         );
         dispatch(setShopInMyCity(result?.data?.data));
+        console.log("Shop in city: ", result?.data?.data);
       } catch (error) {
         console.log(error);
       }

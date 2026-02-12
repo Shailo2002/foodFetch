@@ -166,23 +166,32 @@ export const getItemByCity = async (req, res) => {
       });
     }
 
-    const shops = await Shop.find({
+    let shops = await Shop.find({
       city: { $regex: new RegExp(`^${city}$`, "i") },
-    }).populate("items");
+    });
+
+    let items;
+    let fallback = false;
 
     if (!shops || shops.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No shops found for this city",
-      });
-    }
+      items = await Item.find().limit(10); // demo items
+      fallback = true;
+    } else {
+      const shopIds = shops.map((shop) => shop._id);
+      items = await Item.find({ shop: { $in: shopIds } });
 
-    const shopIds = shops.map((shop) => shop._id);
-    const items = await Item.find({ shop: { $in: shopIds } });
+      if (!items || items.length === 0) {
+        items = await Item.find().limit(10);
+        fallback = true;
+      }
+    }
 
     return res.status(200).json({
       success: true,
-      message: "Items found from your city",
+      fallback,
+      message: fallback
+        ? "No items in your city. Showing demo items."
+        : "Items found from your city",
       data: items,
     });
   } catch (error) {

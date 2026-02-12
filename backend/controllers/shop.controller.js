@@ -3,7 +3,6 @@ import uploadOnCloudinary from "../utils/cloudinary.js";
 
 export const CreateOrEditShop = async (req, res) => {
   try {
-
     const { name, city, state, address } = req.body;
     let image;
     if (req.file) {
@@ -53,7 +52,7 @@ export const CreateOrEditShop = async (req, res) => {
         image,
         owner: req.userId,
       },
-      { new: true }
+      { new: true },
     );
 
     await shop.populate("owner items");
@@ -74,7 +73,6 @@ export const CreateOrEditShop = async (req, res) => {
 
 export const getShop = async (req, res) => {
   try {
-
     const userId = req.userId;
 
     let shop = await Shop.findOne({ owner: userId }).populate({
@@ -115,9 +113,20 @@ export const getShopByCity = async (req, res) => {
       });
     }
 
-    const result = await Shop.find({
+    let result = await Shop.find({
       city: { $regex: new RegExp(`^${city}$`, "i") },
     }).populate("items");
+
+    if (result.length === 0) {
+      result = await Shop.find().limit(5).populate("items");
+
+      return res.status(200).json({
+        success: true,
+        message: "No shops in your city. Showing demo shops.",
+        fallback: false,
+        data: result,
+      });
+    }
 
     return res.status(200).json({
       success: true,

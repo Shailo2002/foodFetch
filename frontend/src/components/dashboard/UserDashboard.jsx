@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import { categories } from "../../data/category";
 import { motion } from "framer-motion";
 
-
 export default function UserDashboard() {
   const CatescrollRef = useRef();
   const ShopScrollRef = useRef();
@@ -19,9 +18,10 @@ export default function UserDashboard() {
   const [showShopRightButton, setShowShopRightButton] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { currentCity, shopInMyCity, ItemInMyCity, searchItems } = useSelector(
-    (state) => state.user
+    (state) => state.user,
   );
   const [updatedItemList, setUpdatedItemList] = useState(ItemInMyCity);
+  console.log("items in my city: ", ItemInMyCity);
 
   const updateButton = (ref, setLeftButton, setRightButton) => {
     const element = ref.current;
@@ -29,7 +29,7 @@ export default function UserDashboard() {
       setLeftButton(element.scrollLeft > 0);
 
       setRightButton(
-        element.scrollLeft + element.clientWidth >= element.scrollWidth
+        element.scrollLeft + element.clientWidth >= element.scrollWidth,
       );
     }
   };
@@ -39,7 +39,7 @@ export default function UserDashboard() {
       setUpdatedItemList(ItemInMyCity);
     } else {
       const newItemList = ItemInMyCity.filter(
-        (item) => item.category === category
+        (item) => item.category === category,
       );
       setUpdatedItemList(newItemList);
     }
@@ -65,7 +65,7 @@ export default function UserDashboard() {
         updateButton(
           CatescrollRef,
           setShowCateLeftButton,
-          setShowCateRightButton
+          setShowCateRightButton,
         );
       });
     }
@@ -74,7 +74,7 @@ export default function UserDashboard() {
         updateButton(
           ShopScrollRef,
           setShowShopLeftButton,
-          setShowShopRightButton
+          setShowShopRightButton,
         );
       });
     }
