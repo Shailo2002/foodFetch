@@ -18,6 +18,7 @@ import {
 } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../context/SocketProvider";
+import { SERVER_URL } from "../../Contant";
 
 export default function DeliveryBoyDahsboard() {
   const socket = useSocket();
@@ -34,7 +35,7 @@ export default function DeliveryBoyDahsboard() {
 
   const handleGetAssignments = async () => {
     try {
-      const result = await axios.get(`/api/order/get-assignments`, {
+      const result = await axios.get(`${SERVER_URL}/api/order/get-assignments`, {
         withCredentials: true,
       });
       setAvailableAssignments(result?.data?.data);
@@ -47,7 +48,7 @@ export default function DeliveryBoyDahsboard() {
     try {
       setLoading(true);
       const result = await axios.get(
-        `/api/order/accept-order/${assignmentId}`,
+        `${SERVER_URL}/api/order/accept-order/${assignmentId}`,
         { withCredentials: true },
       );
       getCurrentOrder();
@@ -60,7 +61,7 @@ export default function DeliveryBoyDahsboard() {
 
   const getCurrentOrder = async () => {
     try {
-      const result = await axios.get(`/api/order/get-current-order`, {
+      const result = await axios.get(`${SERVER_URL}/api/order/get-current-order`, {
         withCredentials: true,
       });
       setCurrentOrder(result?.data?.data);
@@ -74,7 +75,7 @@ export default function DeliveryBoyDahsboard() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `/api/order/send-delivery-otp`,
+        `${SERVER_URL}/api/order/send-delivery-otp`,
         {
           orderId: currentOrder?._id,
           shopOrderId: currentOrder?.shopOrder?._id,
@@ -100,7 +101,7 @@ export default function DeliveryBoyDahsboard() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `/api/order/verify-delivery-otp`,
+        `${SERVER_URL}/api/order/verify-delivery-otp`,
         {
           shopOrderId: currentOrder?.shopOrder?._id,
           orderId: currentOrder?._id,
@@ -124,7 +125,7 @@ export default function DeliveryBoyDahsboard() {
 
   const handleTodayDeliveries = async () => {
     try {
-      const result = await axios.get(`/api/order/get-today-deliveries`, {
+      const result = await axios.get(`${SERVER_URL}/api/order/get-today-deliveries`, {
         withCredentials: true,
       });
 

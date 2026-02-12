@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
 import { updateOrderStatus } from "../redux/userSlice";
+import { SERVER_URL } from "../../Contant";
 
 function OwnerOrderCard({ data }) {
   const [availableBoys, setAvailableBoys] = useState([]);
@@ -21,7 +22,7 @@ function OwnerOrderCard({ data }) {
   const handleUpdateStatus = async (status, orderId, shopId) => {
     try {
       const result = await axios.post(
-        `/api/order/update-status/${orderId}/${shopId}`,
+        `${SERVER_URL}/api/order/update-status/${orderId}/${shopId}`,
         { status: status },
         { withCredentials: true },
       );

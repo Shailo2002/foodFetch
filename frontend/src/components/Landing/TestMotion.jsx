@@ -130,7 +130,6 @@ export default function HeroSlide() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      console.log("direction : ", direction);
       if (direction == "left") {
         setPrev((prev) => (prev + 1) % slides.length);
       }

@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setItemInMyCity } from "../redux/userSlice";
+import { SERVER_URL } from "../../Contant";
 
 export default function useGetItemByCity() {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ export default function useGetItemByCity() {
     const fetchItems = async () => {
       try {
         const result = await axios.get(
-          `/api/item/get-item-city/${currentCity}`,
+          `${SERVER_URL}/api/item/get-item-city/${currentCity}`,
           { withCredentials: true },
         );
         // console.log("useGetItemByCity hook : ", result?.data?.data);

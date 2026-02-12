@@ -7,12 +7,17 @@ import UserDashboard from "../components/dashboard/UserDashboard";
 export default function Home() {
   const { userData } = useSelector((state) => state.user);
 
+  if (!userData || !userData.data) {
+    return null; // or a loader
+  }
+  const role = userData?.data?.role;
+
   return (
     <div>
       {" "}
-      {userData.data.role == "user" && <UserDashboard />}
-      {userData.data.role == "owner" && <OwnerDashboard />}
-      {userData.data.role == "delivery_boy" && <DeliveryBoyDahsboard />}
+      {role === "user" && <UserDashboard />}
+      {role === "owner" && <OwnerDashboard />}
+      {role === "delivery_boy" && <DeliveryBoyDahsboard />}
     </div>
   );
 }

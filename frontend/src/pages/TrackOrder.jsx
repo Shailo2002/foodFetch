@@ -23,9 +23,12 @@ function TrackOrder() {
 
   const handleGetOrder = async () => {
     try {
-      const order = await axios.get(`/api/order/get-order-by-id/${orderId}`, {
-        withCredentials: true,
-      });
+      const order = await axios.get(
+        `${SERVER_UR}/api/order/get-order-by-id/${orderId}`,
+        {
+          withCredentials: true,
+        },
+      );
       setCurrentOrder(order?.data?.data);
     } catch (error) {
       handleApiError(error);

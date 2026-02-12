@@ -56,9 +56,13 @@ export default function AddItems() {
         formData.append("image", backendImage);
       }
 
-      const result = await axios.post(`/api/item/add-item`, formData, {
-        withCredentials: true,
-      });
+      const result = await axios.post(
+        `${SERVER_URL}/api/item/add-item`,
+        formData,
+        {
+          withCredentials: true,
+        },
+      );
       dispatch(setMyShopData(result?.data?.data));
       toast.success(result.data.message || "shop added successful!");
       navigate("/home");

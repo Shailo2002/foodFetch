@@ -18,7 +18,7 @@ function SignIn() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
+
   const handleSignIn = async () => {
     if (!email || !password) {
       return toast.error("Email and password are required");
@@ -27,9 +27,9 @@ function SignIn() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `/api/auth/signin`,
+        `${SERVER_URL}/api/auth/signin`,
         { email, password },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       dispatch(setUserData(result.data));
 
@@ -53,9 +53,9 @@ function SignIn() {
       const result = await signInWithPopup(auth, provider);
 
       const response = await axios.post(
-        `/api/auth/google-auth`,
+        `${SERVER_URL}/api/auth/google-auth`,
         { fullName: result.user.displayName, email: result.user.email },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       dispatch(setUserData(response.data));
 

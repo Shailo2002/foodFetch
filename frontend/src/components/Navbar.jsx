@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { AnimatePresence } from "framer-motion";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { SERVER_URL } from "../../Contant";
 
 const list = {
   hidden: { opacity: 0 },
@@ -51,7 +52,7 @@ export default function Navbar() {
     try {
       console.log("logout button");
 
-      const response = await axios.get(`/api/auth/signout`, {
+      const response = await axios.get(`${SERVER_URL}/api/auth/signout`, {
         withCredentials: true,
       });
       dispatch(clearUserData());

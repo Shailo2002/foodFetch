@@ -9,6 +9,7 @@ import axios from "axios";
 import { setMyShopData } from "../redux/ownerSlice";
 import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
+import { SERVER_URL } from "../../Contant";
 
 export default function EditItem() {
   const { itemId } = useParams();
@@ -57,7 +58,7 @@ export default function EditItem() {
       }
 
       const result = await axios.post(
-        `/api/item/edit-item/${itemId}`,
+        `${SERVER_URL}/api/item/edit-item/${itemId}`,
         formData,
         {
           withCredentials: true,
@@ -76,9 +77,12 @@ export default function EditItem() {
 
   useEffect(() => {
     const getItem = async () => {
-      const result = await axios.get(`/api/item/get-item/${itemId}`, {
-        withCredentials: true,
-      });
+      const result = await axios.get(
+        `${SERVER_URL}/api/item/get-item/${itemId}`,
+        {
+          withCredentials: true,
+        },
+      );
       setName(result?.data?.data?.name || "");
       setCategory(result?.data?.data?.category || "");
       setFoodType(result?.data?.data?.foodType || "");

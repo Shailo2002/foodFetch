@@ -33,9 +33,9 @@ function SignUp() {
       setLoading(true);
 
       const result = await axios.post(
-        `/api/auth/signup`,
+        `${SERVER_URL}/api/auth/signup`,
         { fullName, email, mobile, password, role: selectedRole },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       dispatch(setUserData(result?.data));
       toast.success(result.data.message || "Signup successful!");
@@ -57,14 +57,14 @@ function SignUp() {
       const result = await signInWithPopup(auth, provider);
 
       const response = await axios.post(
-        `/api/auth/google-auth`,
+        `${SERVER_URL}/api/auth/google-auth`,
         {
           fullName: result.user.displayName,
           email: result.user.email,
           mobile,
           role: selectedRole,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       dispatch(setUserData(response.data));

@@ -20,6 +20,7 @@ import { AddMyOrder, clearCart } from "../redux/userSlice";
 import L from "leaflet";
 import customMarker from "../assets/marker5.png";
 import EmptyCartCard from "../components/EmptyCartCard";
+import { SERVER_URL } from "../../Contant";
 
 const customIcon = new L.Icon({
   iconUrl: customMarker,
@@ -118,7 +119,7 @@ function CheckOut() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `/api/order/place-order`,
+        `${SERVER_URL}/api/order/place-order`,
         {
           cartItems,
           paymentMethod,
@@ -166,7 +167,7 @@ function CheckOut() {
         try {
           setLoading(true);
           const result = await axios.post(
-            `/api/order/verify-payment`,
+            `${SERVER_URL}/api/order/verify-payment`,
             { razorpay_payment_id: response.razorpay_payment_id, orderId },
             { withCredentials: true },
           );

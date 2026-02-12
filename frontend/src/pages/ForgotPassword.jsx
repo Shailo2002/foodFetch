@@ -6,6 +6,7 @@ import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
 import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
+import { SERVER_URL } from "../../Contant";
 
 export default function ForgotPassword() {
   const [step, setStep] = useState(1);
@@ -22,7 +23,7 @@ export default function ForgotPassword() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `/api/auth/send-otp`,
+        `${SERVER_URL}/api/auth/send-otp`,
         { email },
         { withCredentials: true },
       );
@@ -46,7 +47,7 @@ export default function ForgotPassword() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `/api/auth/verify-otp`,
+        `${SERVER_URL}/api/auth/verify-otp`,
         { email, otp },
         { withCredentials: true },
       );
@@ -73,7 +74,7 @@ export default function ForgotPassword() {
     try {
       setLoading(true);
       const result = await axios.post(
-        `/api/auth/reset-password`,
+        `${SERVER_URL}/api/auth/reset-password`,
         { newPassword: newpassword, email },
         { withCredentials: true },
       );

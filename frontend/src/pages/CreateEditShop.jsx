@@ -9,6 +9,7 @@ import axios from "axios";
 import { setMyShopData } from "../redux/ownerSlice";
 import toast from "react-hot-toast";
 import { handleApiError } from "../utils/handleApiError";
+import { SERVER_URL } from "../../Contant";
 
 export default function CreateEditShop() {
   const navigate = useNavigate();
@@ -46,9 +47,13 @@ export default function CreateEditShop() {
         formData.append("image", backendImage);
       }
 
-      const result = await axios.post(`/api/shop/create-edit`, formData, {
-        withCredentials: true,
-      });
+      const result = await axios.post(
+        `${SERVER_URL}/api/shop/create-edit`,
+        formData,
+        {
+          withCredentials: true,
+        },
+      );
       dispatch(setMyShopData(result?.data?.data));
       toast.success(result?.data?.message || "shop added successful!");
       navigate("/home");

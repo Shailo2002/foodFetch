@@ -6,13 +6,14 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { setMyShopData } from "../redux/ownerSlice";
 import { useDispatch } from "react-redux";
+import { SERVER_URL } from "../../Contant";
 
 export default function OwnerItemCard({ props }) {
   const dispatch = useDispatch();
 
   const handleDeleteItem = async (itemId) => {
     try {
-      const result = await axios.delete(`/api/item/delete-item/${itemId}`, {
+      const result = await axios.delete(`${SERVER_URL}/api/item/delete-item/${itemId}`, {
         withCredentials: true,
       });
       dispatch(setMyShopData(result?.data?.data));
