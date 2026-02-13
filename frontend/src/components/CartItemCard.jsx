@@ -1,8 +1,5 @@
 import React from "react";
 import { MdDelete } from "react-icons/md";
-import FoodQuantityEditor from "./FoodQuantityEditor";
-import { BiSolidLeaf } from "react-icons/bi";
-import { FaDrumstickBite } from "react-icons/fa";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { useDispatch } from "react-redux";
 import { deletefromCart, updateQuantity } from "../redux/userSlice";
